@@ -1,0 +1,260 @@
+\section{Private vs. Public BigchainDB, and Authentication}\label{sec:permissioning}
+
+\subsection{Introduction}
+The way that BigchainDB is designed, permissioning sits at a layer above the core of the design. 
+However, we have already seen many questions about “private vs. public” versions of BigchainDB, privacy, and authentication. 
+In our view, a rich permissioning framework is the technology foundation. 
+This section explores permissions, roles, private BigchainDBs, and privacy. 
+It then has an extended section on a public BigchainDB, which we believe is tremendously important. 
+It finally discusses authentication and the role of certificate-granting authorities.
+
+\subsection{Permissions, Identities, and Roles}
+Permissions are rules about what a user can do with a piece of data. 
+Permissions are used in all kinds of computing environments, from shared file systems like Dropbox and Google Drive, to local file systems in Windows, iOS, and Linux, to distributed DBs. 
+We should expect blockchain DBs to have rich permissioning systems.
+
+Permissioning ideas from these other systems can inform our design. 
+In Unix, each file or directory has three identity roles (owning user, owning group, others) and three types of permissions for each role (read, write, execute), for a total of nine permission values. 
+For example, the permission values ``\texttt{rwxr--r---}'' means that the owning user can read, write, and execute (\texttt{rwx}); the owning group can read but not write or execute (\texttt{r--}), and others have no permissions (\texttt{---}).
+
+A BigchainDB database instance is characterized by which identities have which permissions. 
+Table \ref{tab:permissioning_enterprise} and Table \ref{tab:permissioning_public} gives examples of permissions on a private and public BigchainDB, respectively. 
+This is loosely comparable to a corporation’s internal intranet and the public Internet. 
+We will elaborate on these shortly.
+
+\begin{savenotes}
+\begin{table}[ht!]
+  \caption{Example Permissioning / Roles in an Enterprise BigchainDB Instance}
+  \footnotesize
+  \makebox[\textwidth][c]{
+  \centering
+  \setlength\extrarowheight{3pt}
+  \begin{tabular}{ | m{\dimexpr 0.2\linewidth-2\tabcolsep} |
+	  M{\dimexpr 0.12\linewidth-2\tabcolsep} |
+	  M{\dimexpr 0.1\linewidth-2\tabcolsep} |
+	  M{\dimexpr 0.1\linewidth-2\tabcolsep} |
+	  M{\dimexpr 0.1\linewidth-2\tabcolsep} |
+	  M{\dimexpr 0.1\linewidth-2\tabcolsep} |
+	  M{\dimexpr 0.1\linewidth-2\tabcolsep} |
+	  M{\dimexpr 0.16\linewidth-2\tabcolsep} |
+	  M{\dimexpr 0.1\linewidth-2\tabcolsep} |
+	  M{\dimexpr 0.12\linewidth-2\tabcolsep} | } \Xhline{4\arrayrulewidth}\rowcolor{black}\color{white}
+  Action    & \color{white} Requires vote & \color{white} Voting Node & \color{white} Sys Admin & \color{white} Issuer & \color{white} Trader & \color{white}Broker & \color{white} Authenticator & \color{white} Auditor & \color{white} Core vs Overlay \\\Xhline{4\arrayrulewidth}
+  Vote on Admin \& Asset Actions & & Y & & & & & & & \textbf{Core} \\\Xhline{2\arrayrulewidth}\rowcolor{backcolour}
+  \multicolumn{10}{|c|}{Admin actions}\\\Xhline{2\arrayrulewidth}
+  Update Role or Permissions & Y & Y & Y & & & & & & \textbf{Core} \\\hline
+  Add/Remove Voting Node & Y & Y & Y\footnote{\label{note:permissioning_sysadmin}Action is permitted only during the network initiatization process. Once a network is live, the sys admin can no longer act unilaterally.} & & & & & & \textbf{Core} \\\hline
+  Update software & Y & Y & Y & & & & & & \textbf{Core} \\\Xhline{2\arrayrulewidth}\rowcolor{backcolour}
+  \multicolumn{10}{|c|}{Asset actions}\\\Xhline{2\arrayrulewidth}
+  Issue Asset                        & Y & & & Y &   &   &   & & \textbf{Core} \\\hline
+  Transfer Asset                     & Y & & & O & O & P &   & & \textbf{Core} \\\hline
+  Receive Asset                      & Y & & & Y & Y &   &   & & \textbf{Core} \\\hline
+  Grant Read Access on Asset         & Y & & & O & O & P & P & & \textbf{Core} \\\hline
+  Consign Asset                      & Y & & & O & O &   &   & & \textbf{Overlay} \\\hline
+  Receive Asset Consignment          & Y & & & Y & Y & Y &   & & \textbf{Overlay} \\\hline
+  Add Asset Information              & Y & & & O & O & P &   & & \textbf{Overlay} \\\hline
+  Add Authentication Information     & Y & & & O & O &   & P & & \textbf{Overlay} \\\hline
+  Create Certificate of Authenticity & N & & & O & O & P &   & & \textbf{Overlay} \\\Xhline{2\arrayrulewidth}\rowcolor{backcolour}
+  \multicolumn{10}{|c|}{Read actions}\\\Xhline{2\arrayrulewidth}
+  Read Asset Information             & N & Y & Y & O & Y & P & P & P & \textbf{Overlay} \\\hline
+  Read Certificate of Authenticity   & N & Y & Y & O & Y & P & P & P & \textbf{Overlay} \\
+  \Xhline{4\arrayrulewidth}
+  \end{tabular}
+  }
+  \label{tab:permissioning_enterprise}
+\end{table}
+\end{savenotes}
+
+An \textbf{identity}, which signifies the holder of a unique private key, can be granted a \textbf{permission} for each transaction type. 
+Permissions, as reflected on the tables, can be as follows: “\textbf{Y}” means the identity can perform a transaction; “\textbf{O}” means the identity can perform a transaction if the identity is the owner of the asset, which is indicated by holding the private key to that asset; and “\textbf{P}” means can perform a transaction, after the owner of the asset has given permission to the identity. 
+Most transactions need to be voted as approved or not approved by voting nodes, with the exception of read operations.
+
+A role is a group of individual permissions. 
+Roles facilitate permission assignment and help clarify the rights given to users in their identity and with their permissions. 
+Roles can be custom-created depending on the context. 
+An identity may hold multiple roles, where the identity’s permissions are the sum of the identity’s role permissions and any other permissions that have been granted to it.
+
+The core BigchainDB protocol includes as few actions or transaction types as possible, in order to maximize backwards-compatibility and minimize complexity. 
+Overlay protocols can add new features, such as SPOOL \cite{dejonghe_spool} for unique asset ownership, which adds actions like consignment and authentication to property transactions. 
+Table \ref{tab:permissioning_enterprise} and Table \ref{tab:permissioning_public} each have core protocol actions, as well as some overlay protocol actions from SPOOL.
+
+\subsection{Private BigchainDBs}
+A private BigchainDB could be set up amongst a group of interested parties to facilitate or verify transactions between them in a wide variety of contexts, such as exchanging of securities, improving supply chain transparency, or managing the disbursement of royalties. 
+For instance, the music industry could choose to form a trust network including record labels, musicians, collecting societies, record stores, streaming services, and support providers such as lawyers and communications agencies. 
+A consortium of parties operating a private BigchainDB comprise an “enterprise trust network” (ETN).
+
+Table \ref{tab:permissioning_enterprise} illustrates permissioning of a sample private BigchainDB instance for use in an ETN.
+
+The first column shows actions allowed; the second column shows whether the action needs voting; columns 3-9 are roles; and the final column indicates whether the action is part of the core BigchainDB protocol.
+
+An identity holding the “Voting Node” role (column 3) can vote on asset actions. No other role is able to do so.
+
+Voting Nodes can update permissions for any other identity (row 2). 
+Changing permissions requires voting consensus from other nodes. 
+This is how new identities entering the system are assigned permissions or roles, and also how Voting Nodes are added or removed.
+
+A Voting Node may propose an update to the Voting Node software (row 4).
+Voting Nodes will only update once they reach consensus.
+Voting Nodes also must be able to read an asset (rows 14-15) in order to be able to vote.
+
+Like a Voting Node, an identity with “Sys Admin” role can propose to update permissions or update voting node software. 
+This role is helpful because voting nodes may not be up-to-date technically when the Sys Admin is. 
+Crucially, the Sys Admin cannot unilaterally update the software; rather, it can only propose software and ensure that the voting nodes hit consensus about updating. 
+The Sys Admin must also be able to read an asset (rows 14-15), in order to debug issues that may arise with the software.
+
+The main job of the “Issuer” role is to issue assets (row 5).
+But it can also do everything that a Trader role can do.
+
+The “Trader” role conducts trades of assets, has others conduct trades on its behalf, and lines up reading and authentication of assets.
+It can transfer ownership to an identity, though only if it is the owner of the asset as indicated by the “O” (row 6); or be on the receiving end of an asset transfer (row 7).
+Similarly, if it is the owner then it can consign an asset to have another identity transact with the asset on its behalf (row 9); or be on the receiving end as consignee (row 10). By default, read permissions are off, but a Trader can allow others to read the asset info (row 10 grants permission; row 15 read). The Trader can also add arbitrary data or files to an asset (row 11).
+
+A “Broker / Consignee” role (column 7) gets a subset of the Trader’s permissions - only what is needed to be able to sell the work on the owner’s behalf.
+
+We describe the “Authenticator” role (column 8) further in section \ref{subsec:permissioning_authentication}.
+
+For simplicity of presentation, some details have been omitted compared to the actual implementation.
+For example, usually a Consignee has to accept a consignment request.
+
+\subsection{Privacy}
+
+\noindent \textbf{Q}: Bank A doesn’t want Bank B to see their transactions.
+But if they’re both voting nodes, can Bank B see Bank A’s transactions?
+
+\noindent \textbf{A}: This is not really related to BigchainDB; it doesn’t care about the content of the transaction.
+For the transaction to be valid, it just needs to have a current unspent input and a correct signature.
+
+\medskip
+\noindent \textbf{Q}: But if every voting node knows the identity of the nodes in a transaction, and can see the amount transacted in order to validate the transaction, than isn’t that a loss of privacy?
+
+\noindent \textbf{A}: The nodes in a transaction are just public keys.
+The way that the mapping between a public key and an identity is done should be taken care of by Bank A and Bank B.
+If they want to hide the amount that is being transacted, they can do that; BigchainDB doesn't care.
+
+Let’s say that Bank A creates an input “A” and gives it to “PUBKA”, and inside the data field it says that this is an input for “B”, and “B” is just a serial number.
+BigchainDB makes sure that input “A” can only be spent once and that only “PUBKA” can spend it.
+There are no amounts involved.
+
+\subsection{A Public BigchainDB}\label{subsec:permissioning_public}
+\subsubsection{Introduction}
+A BigchainDB can be configured to be more public, with permissioning such that anyone can issue assets, trade assets, read assets, and authenticate. 
+We are taking steps towards a first public BigchainDB\footnote{We envision that ultimately there will be many public BigchainDBs. More than one is not a big problem, as there is no native token built into the DB. Universal resource indicators (URIs) will make them easy to distinguish.}.
+
+\subsubsection{Motivations}
+
+Decentralization technology has potential to enable a new phase for the Internet that is open and democratic but also easy to use and trust \cite{swan2015blockchain}\cite{andreesen2014bitcoin}\cite{monegro2014blockchain_stack}.
+It is intrinsically democratic, or at the very least disintermediating.
+It is also trustworthy: cryptography enables the conduct of secure and reliable transactions with strangers without needing to trust them, and without needing a brand as proxy.
+
+The discourse is around benefits in both the public and private sector.
+In the public sector, the most obvious benefit is in the future shape of the Internet and especially the World Wide Web \cite{berners1989information_mgmnt}.
+These technologies have fundamentally reshaped society over the past two decades. The 90s Web started out open, free-spirited, and democratic. 
+In the past 15 years, power has consolidated across social media platforms and the cloud.
+People around the world have come to trust and rely on these services, which offer a reliability and ease of use that did not exist in the early Internet. 
+However, these services are massively centralized, resulting in both strict control by the central bodies and vulnerability to hacking by criminals and nation-states.
+
+Decentralization promises a large positive impact on society. 
+An antidote to these centralized services and concentration of power is to re-imagine and re-create our Internet via decentralized networks, with the goal of giving people control over their data and assets and redistributing power across the network.
+
+\subsubsection{Public BigchainDB Roles}
+
+\begin{table}[ht!]
+  \caption{Example Permissioning / Roles in an Public BigchainDB}
+  \footnotesize
+  \makebox[\textwidth][c]{
+  \centering
+  \setlength\extrarowheight{3pt}
+  \begin{tabular}{ | m{\dimexpr 0.3\linewidth-2\tabcolsep} |
+	  M{\dimexpr 0.12\linewidth-2\tabcolsep} |
+	  M{\dimexpr 0.1\linewidth-2\tabcolsep} |
+	  M{\dimexpr 0.1\linewidth-2\tabcolsep} |
+	  M{\dimexpr 0.1\linewidth-2\tabcolsep} |
+	  M{\dimexpr 0.1\linewidth-2\tabcolsep} |
+	  M{\dimexpr 0.17\linewidth-2\tabcolsep} |} \Xhline{4\arrayrulewidth}\rowcolor{black}\color{white}
+  Action    & \color{white} Requires vote & \color{white} Voting Node & \color{white} Sys Admin & \color{white} Issuer & \color{white} User & \color{white} Authenticator \\\Xhline{4\arrayrulewidth}
+  Vote on Admin \& Asset Actions & & Y & & & & \textbf{Core} \\\Xhline{2\arrayrulewidth}\rowcolor{backcolour}
+  \multicolumn{7}{|c|}{Admin actions}\\\Xhline{2\arrayrulewidth}
+  Update Role or Permissions & Y & Y & Y & & & \textbf{Core} \\\hline
+  Add/Remove Voting Node & Y & Y & Y\footnotemark[\getrefnumber{note:permissioning_sysadmin}] & & & \textbf{Core} \\\hline
+  Update software & Y & Y & Y & & & \textbf{Core} \\\Xhline{2\arrayrulewidth}\rowcolor{backcolour}
+  \multicolumn{7}{|c|}{Asset actions}\\\Xhline{2\arrayrulewidth}
+  Issue Asset                        & Y & & & Y &   & \textbf{Core} \\\hline
+  Transfer Asset                     & Y & & & O &   & \textbf{Core} \\\hline
+  Receive Asset                      & Y & & & Y &   & \textbf{Core} \\\hline
+  Grant Read Access on Asset         & Y & & & N/A & N/A & \textbf{Core} \\\hline
+  Consign Asset                      & Y & & & O &   & \textbf{Overlay} \\\hline
+  Receive Asset Consignment          & Y & & & Y &   & \textbf{Overlay} \\\hline
+  Add Asset Information              & Y & & & O &   & \textbf{Overlay} \\\hline
+  Add Authentication Information     & Y & & & O & P & \textbf{Overlay} \\\hline
+  Create Certificate of Authenticity & N & & & O &   & \textbf{Overlay} \\\Xhline{2\arrayrulewidth}\rowcolor{backcolour}
+  \multicolumn{7}{|c|}{Read actions}\\\Xhline{2\arrayrulewidth}
+  Read Asset Information             & N & Y & Y & O & P & \textbf{Overlay} \\\hline
+  Read Certificate of Authenticity   & N & Y & Y & O & P & \textbf{Overlay} \\
+  \Xhline{4\arrayrulewidth}
+  \end{tabular}
+  }
+  \label{tab:permissioning_public}
+\end{table}
+
+Table \ref{tab:permissioning_public} describes permissioning of a public BigchainDB instance.
+Here, BigchainDB is configured such that each User (column 6) can do anything, except for sensitive roles such as voting, administration, and authentication.
+Critically, Users can issue any asset (column 6, row 5) and read all assets (column 6, row 14); this is one of the defining features of an open blockchain. 
+
+\subsubsection{Public BigchainDB Federation Caretakers}
+
+At the core of a public BigchainDB are the “Caretakers”: organizations with an identity that has a “Voting Node” role.
+An identity with that role can vote to approve or reject transactions, and can vote whether to assign the “Voting Node” role to another identity. 
+(Note: an organization can have more than one identity, so a Caretaker could have two or more identities with a “Voting Node” role.)
+
+To start, the public BigchainDB will have five identities with the Voting Node role: three held by ascribe and two held by other organizations chosen by ascribe.
+That is, the public BigchainDB will start with three Caretakers: ascribe and two others.
+From there, additional Caretakers will be selected and added to the federation by existing Caretakers.
+Caretakers will have divergent interests to avoid collusion, but must have one thing in common: they must have the interests of the Internet at heart.
+In choosing Caretakers, there will be a preference to organizations that are non-profit or building foundational technology for a decentralized Internet; and for diversity in terms of region, language, and specific mandate.
+
+The right organizational structure will be critical to the success of a public BigchainDB.
+Governance issues have plagued the Bitcoin blockchain \cite{popper2016bitcoin_crisis}.
+We can take these as lessons in the design of a public BigchainDB.
+We are consulting with lawyers, developers, academics, activists, and potential Caretakers to develop a strong, stable system that is transparent enough to be relied on and flexible enough to meet the needs of the network.
+
+Ultimately, the public BigchainDB will operate entirely independently under its own legal entity.
+It will choose its own Caretakers and set its own rules—but it will always work toward the long-term goal of a free, open, and decentralized Internet.
+
+\medskip
+
+\fbox{\begin{minipage}{\linewidth}
+\centering
+\medskip
+We are gathering a consortium of potential public BigchainDB nodes. If you think your organization fits as one of these nodes, or have suggestions for nodes, please contact the authors.
+\medskip
+\end{minipage}}
+
+\subsection{BigchainDB Authentication of Assets}\label{subsec:permissioning_authentication}
+
+The “Authenticator” role gives a formal place for authentication and certificate-granting authorities.
+Examples may include a credit rating agency, an art expert certifying the authenticity of a painting, a university issuing a degree, a governmental body issuing a permit, or a notary stamping a document.
+
+While the BigchainDB can function completely without the Authenticator role, in a decentralized network where anyone can issue assets, it is clear that third parties will step in to provide an extra layer of trust for asset buyers.
+
+These third parties would do all the things trusted third parties do today—act as an escrow agent, place a stamp or seal of approval, issue a certificate, or rate the quality or reputation of the asset issuer.
+
+For authentication to be issued, a Trader enables an identity to have read and authentication permission on an asset (Table \ref{tab:permissioning_enterprise}, row 8), then the Authenticator reviews all relevant information about the asset, and issues a report as a transaction (Table \ref{tab:permissioning_enterprise}, row 12).
+
+The owner of the asset may then create a cryptographic Certificate of Authenticity (COA), a digital document that includes all the digitally signed authentication reports from the various authenticators.
+The COA is digitally signed as well, so even if printed out, tampering can be detected.
+The COA can then be used by the seller as a pointer to authenticity, to show that the asset is not fraudulent.
+
+A public BigchainDB should not be prescriptive—it should be open to new sources of authority.
+The issuance of certificates does not have to be limited to traditional authorities.
+BigchainDB allows flexibility in this respect, remaining open to the many possible approaches that will undoubtedly be created by users.
+BigchainDB therefore limits its role to providing a mechanism for reliable gathering and aggregation of signed data.
+
+We imagine a rich community of authorities signing assets. 
+For example, point-of-creation software or hardware vendors could certify that a particular digital creation was created by their software or hardware at a given point in time. 
+Individuals could leave certified reviews for movies, restaurants, consumer goods, or even reputational reviews for other individuals.
+Other examples could emerge from ideas in prediction markets \cite{hanson1993consensus}, the issuance of securities, and the rating of those securities.
+
+In a model where anyone can issue an authoritative statement about someone or something, the reputation of the Authenticator will be critically important.
+How do you know whose certificates you can trust?
+We anticipate the development of social media reputation systems that go beyond Facebook Friends and Likes.
+BigchainDB enables the widespread implementation of new reputation systems such as the Backfeed protocol for management of distributed collaboration \cite{backfeed}, or systems drawing inspiration from fictional reputation economies described by Cory Doctorow (Whuffie) \cite{doctorow2003down}, Daniel Suarez (Levels) \cite{suarez2010freedomtm}, and others.

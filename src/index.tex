@@ -1,0 +1,124 @@
+\documentclass[a4paper]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage[toc,page]{appendix}
+\graphicspath{{img/}}
+
+\usepackage{listings}
+\usepackage{color, colortbl}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codeblack}{rgb}{0,0,0}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{codeblue}{rgb}{0,0,0.6}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.95}
+ 
+\lstdefinestyle{python}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{codeblue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize\ttfamily,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=t,
+    keepspaces=true,                 
+    language=Python,
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstdefinestyle{json}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codeblack},
+    keywordstyle=\color{codeblack},
+    numberstyle=\tiny\color{codeblack},
+    stringstyle=\color{codeblack},
+    basicstyle=\footnotesize\ttfamily,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,
+    keepspaces=true,                 
+    language=Python,
+    numbers=none,                    
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\usepackage{footnote}
+\usepackage{refcount}
+
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{array}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+\def\zapcolorreset{\let\reset@color\relax\ignorespaces}
+\def\colorrows#1{\noalign{\aftergroup\zapcolorreset#1}\ignorespaces}
+
+%opening
+\title{\LARGE BigchainDB: A Scalable Blockchain Database (DRAFT)}
+
+\author{
+  McConaghy, Trent\\
+  \and
+  Marques, Rodolphe\\
+ \and
+  M\"{u}ller, Andreas\\
+ \and
+  De Jonghe, Dimitri\\
+ \and
+  McConaghy, Troy\\
+ \and
+  McMullen, Greg \\
+ \and
+  Henderson, Ryan \\
+ \and
+  Bellemare, Sylvain\\
+ \and
+  Granzotto, Alberto
+}
+
+\date{\normalsize \today\\ascribe GmbH, Berlin, Germany}
+
+\begin{document}
+
+\maketitle
+
+\input{abstract}
+
+\input{ch01_introduction}
+\input{ch02_background}
+\input{ch03_distributed}
+\input{ch05_bigchain}
+\input{ch06_implementation}
+\input{ch07_latency}
+\input{ch08_permissioning}
+\input{ch09_benchmarks}
+\input{ch10_deployment}
+\input{ch11_conclusion}
+\input{ch12_acknowledgments}
+
+\begin{appendices}
+\input{appendix01_glossary}
+\input{appendix02_blockchain_scalability}
+\input{ch04_dns}
+\input{appendix03_benchmarks}
+\end{appendices}
+
+{\footnotesize\bibliography{bigchain.bib}{}}
+\bibliographystyle{unsrt}
+
+\end{document}

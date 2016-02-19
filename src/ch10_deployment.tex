@@ -1,0 +1,81 @@
+\section{BigchainDB Deployment}\label{sec:deployment}
+
+\subsection{BigchainDB Use Cases}
+
+Many BigchainDB use cases are like traditional blockchain use cases, except focused on situations where higher throughput, lower latency, or more storage capacity is necessary; where powerful querying or permissioning are helpful; or for simplicity of deployment since it feels like using a NoSQL database.
+For example, BigchainDB can handle the throughput of high-volume payment processors, and directly store contracts receipts, or other related documents on the DB alongside the actual transaction.
+Another example is “Bitcoin 2.0” applications, to keep transaction costs reasonable as the application scales\footnote{
+As of Feb 2016, it is about \$$0.10$ for a Bitcoin miner fee for a transaction to go through.
+There is no predefined fee for Bitcoin transactions; the fee is a market by itself.
+But to estimate fee, we can look at the fees that were paid in the last X blocks, and use that information to calculate a fee that will give a high probability that my transaction will go into the next block.
+Usually a higher fee will give a higher priority to my transaction, but in the end, it's the miners that decide whether they want to include the transaction in the block or not.
+Usually the fees are around $15$k-$20$k satoshi per $1000$ bytes, so that would be the average fee to pay.
+Useful resources are blockchain.info \cite{blockchaininfo2015transaction_fees}, Tradeblock \cite{tradeblock} (in the charts, select fee/size) and the bitcoin wiki on transaction fees \cite{bitcoin2015fees}.
+}.
+
+Some BigchainDB use cases are also like traditional distributed DB use cases, except focused where blockchain characteristics can benefit: decentralization, immutability, and the ability to create and transfer digital assets. For example, improving DB reliability by not having a single point of failure, or storage of documents with secure time-stamping.
+
+BigchainDB use cases include:
+\begin{itemize}
+ \item \textbf{Tracking intellectual property assets} along the licensing chain. BigchainDB can reduce licensing friction in channels connecting creators to audiences, and gives perfect provenance to digital artifacts. A typical music service has $38$ million songs—BigchainDB could store this information in a heartbeat, along with licensing information about each song and information about use by subscribers. In another example, consider a medium-sized photo marketplace running $100,000$ transactions a day; to put this on Bitcoin would cost \$$10,000$ per day and tie up the Bitcoin network.
+ \item \textbf{Time stamping, receipts, and certification.} BigchainDB reduces legal friction by providing irrefutable evidence of an electronic action. And, BigchainDB is big enough that supporting information like receipts and certificates of authenticity (COAs) can be stored \textit{directly} on it, rather than linking to the document or storing a hash.
+ \item \textbf{Legally-binding contracts} can be stored directly on the BigchainDB next to the transaction, in a format that is readable by humans and computers \cite{grigg2004ricardian}.
+ \item \textbf{Creation and real-time movement of high-volume financial assets.} Only the owner of the asset can move the asset, rather than the network administrator like in previous database systems. This capability reduces costs, minimizes transaction latency, and enables new applications.
+ \item \textbf{Tracking high-volume physical assets} along whole supply chain. BigchainDB can help reduce fraud, providing massive cost savings. Every RFID tag in existence could be entered on a BigchainDB.
+ \item \textbf{Smart contracts} (decentralized processing), where the application must be fully decentralized and database functionality is crucial.
+ \item \textbf{Data science} applications where the BigchainDB captures massive data streams, and data scientists can easily run queries against BigchainDB in their data mining and analytics tasks.
+ \item \textbf{Improving database reliability} by creating resistance to single points of failure. This reliability helps move past the status quo where a single hack leads to massive data loss, like in Target, Sony, or the OPM \cite{ojeda2014target_hack}\cite{bluestone2014sony_hack}\cite{davis2015hacking}.
+\end{itemize}
+
+\subsection{BigchainDB Products \& Services}
+We envision the following products and services surrounding BigchainDB:
+\begin{enumerate}
+ \item \textbf{BigchainDB: a blockchain database} with high throughput, high capacity, low latency, rich query support, and permissioning.
+ \begin{itemize}
+  \item For large enterprises and industry consortia creating new private trust networks, to take advantage of blockchain capabilities at scale or to augment their existing blockchain deployments with querying and other database functionality
+  \item BigchainDB will be available in an out-of-the-box version that can be deployed just like any other DB, or customized versions (via services, or customized directly by the user).
+  \item BigchainDB will include interfaces such as a REST API, language-specific bindings (e.g. for Python), RPC (like bitcoind), and command line. Below that will be an out-of-the-box core protocol, out-of-the-box asset overlay protocol \cite{dejonghe_spool}, and customizable overlay protocols.
+  \item BigchainDB will support legally binding contracts, which are generated automatically and stored directly, in a format readable by both humans and computers \cite{grigg2004ricardian}. There will be out-of-box contracts for out-of-the-box protocols, and customizable contracts for customizable protocols.
+  \item BigchainDB will offer cryptographic COAs, which can be generated automatically and stored directly on the BigchainDB. There will be out-of-box and customizable versions.
+  \item BigchainDB is built on a large, open-source pre-existing database codebase that has been hardened on enterprise usage over many years. New code will be security-audited and open source.
+ \end{itemize}
+ \item \textbf{BigchainDB as a Service}, using a public BigchainDB instance, or a private BigchainDB with more flexible permissioning.
+ \begin{itemize}
+  \item For developers who want the benefits of blockchain databases without the hassle of setting up private networks.
+  \item For cloud providers and blockchain platform providers who want scalable blockchain database as part of their service.
+  \item For “Bitcoin 2.0” companies looking to keep transaction costs reasonable as they go to scale
+  \item Main interfaces will be a REST API directly, REST API through cloud providers, and language-specific bindings (e.g. Python).
+  \item With the features of the BigchainDB listed above.
+ \end{itemize}
+ \item \textbf{“Blockchain-ify your database”} service, to help others bring blockchain properties to other distributed DBs. Think MySqlChain, CassandraChain, and Neo4jChain.
+ \begin{itemize}
+  \item For DB vendors looking to extend their DB towards blockchain applications.
+  \item For DB developers who want to play with blockchain technology.
+ \end{itemize}
+\end{enumerate}
+
+
+\subsection{Timeline}
+Like many, we have known about Bitcoin and blockchain scalability issues for years.
+Here’s the timeline of how BigchainDB took shape.
+\begin{itemize}
+  \item Oct 2014 – Gave first public talk on big data and blockchains \cite{mcconaghy2014blockchain}.
+  \item Apr 2015 – Preliminary investigations; paused project to focus on IP business.
+  \item Sep 2015 – Re-initiated project; detailed design; building and optimizing.
+  \item Dec 2015 – Benchmark results of $100,000$ writes/s
+  \item Dec 2015 – Software v0.1 (alpha), integrated into an enterprise customer prototype
+  \item Dec 2015 – Whitepaper v0.1 (alpha)
+  \item Jan 2016 – Benchmarks results of $1,000,000$ writes/s
+\end{itemize}
+
+Here’s the tentative schedule:
+\begin{itemize}
+  \item Feb 10, 2016 – Publicly announce BigchainDB
+  \item Feb 10, 2016 – Whitepaper draft, public release
+  \item Feb 10, 2016 – Software v0.1 is open-sourced, using AGPL13\footnote{\url{http://github.com/BigchainDB/BigchainDB}. AGPL (Affero GNU Public License) will be for the core software. Surrounding drivers etc. will be Apache License Version 2.0}. Not recommended for external use yet, but development is in the open.
+  \item Mar 31, 2016 – Software v0.5 (beta 1), working with a handful of lead enterprise users
+  \item April 30, 2016 – Public chain v0.1 alpha
+  \item May 31, 2016 – Software v0.9 (beta 2)
+  \item June 31, 2016 – Security audit complete.
+  \item Aug 31, 2016 – Software 1.0 (production)
+\end{itemize}

@@ -1,0 +1,52 @@
+\section{Background: Traditional Blockchain Scalability}\label{sec:background}
+
+This section discusses how traditional blockchains perform with respect to scalability, with an emphasis on Bitcoin.
+
+\subsection{Technical Problem Description}
+Technically speaking, a traditional blockchain is a distributed database (DB) that solves the “Strong Byzantine Generals” (SBG) problem \cite{koshy2014revolution}, the name given to a combination of the Byzantine Generals problem and the Sybil Attack problem.
+In the Byzantine Generals problem \cite{lamport1982byzantine}, nodes need to agree on some value for a DB entry, under the constraint that the nodes may fail in arbitrary (malicious) ways.
+The Sybil Attack problem \cite{douceur2002sybil} arises when one or more nodes figure out how to get unfairly disproportionate influence in the process of agreeing on a value for an entry.
+It’s an “attack of the clones”—an army of seemingly independent voters actually working together to game the system.
+
+\subsection{Bitcoin Scalability Issues}
+Bitcoin has scalability issues in terms of throughput, latency, capacity, and network bandwidth.
+
+\medskip
+\noindent\textbf{Throughput.} The Bitcoin network processes just $1$ transaction per second (tps) on average, with a theoretical maximum of $7$ tps \cite{bitcoin2015scalability}.
+It could handle higher throughput if each block was bigger, though right now making blocks bigger would lead to size issues (see Capacity and network bandwidth, below).
+This throughput is unacceptably low when compared to the number of transactions processed by Visa ($2,000$ tps typical, $10,000$ tps peak) \cite{trillo2013visa}, Twitter ($5,000$ tps typical, $15,000$ tps peak), advertising networks ($500,000$ tps typical), trading networks, or email networks (global email volume is $183$ billion emails/day or $2,100,000$ tps \cite{sourabh2014email}).
+An ideal global blockchain, or set of blockchains, would support all of these multiple high-throughput uses.
+
+\medskip
+\noindent\textbf{Latency.} Each block on the Bitcoin blockchain takes $10$ minutes to process.
+For sufficient security, it is better to wait for about an hour, giving more nodes time to confirm the transaction.
+By comparison, a transaction on the Visa network is approved in seconds at most.
+Many financial applications need latency of $30$ to $100$ ms.
+
+\medskip
+\noindent\textbf{Capacity and network bandwidth.} The Bitcoin blockchain is about $50$ GB; it grew by $24$ GB in $2015$ \cite{blockchaininfo2015blockchain_size}.
+It already takes nearly a day to download the entire blockchain.
+If throughput increased by $2,000$x to Visa levels, the additional transactions would result in database growth of $3.9$ GB/day or $1.42$ PB/year.
+At $150,000$ tps, the blockchain would grow by $214$ PB/year (yes, petabytes).
+If throughput were 1M tps, it would completely overwhelm the bandwidth of any node’s connection, which is counterproductive to the democratic goals of Bitcoin.
+
+\subsection{Technology Choices Affecting Scalability}
+The Bitcoin blockchain has taken three technology choices, which hurt scaling:
+\begin{enumerate}
+ \item \textbf{Consensus Algorithm: POW.} Bitcoin’s mining rewards actually incentivizes nodes to increase computational resource usage, without any additional gains in throughput, latency, or capacity. A single confirmation from a node takes $10$ minutes on average, and six confirmations take an hour. In Bitcoin this is by design; Litecoin and other altcoins reduce the latency, but compromise security.
+ \item \textbf{Replication: Full.} That is, each node stores a copy of all the data; a “full node”. This copy is typically kept on a single hard drive (or in memory). Ironically, this causes centralization: as amount of data grows, only those with the resources to hold all the data will be able to participate.
+ \item \textbf{Communication Protocol: Broadcast.} Bitcoin uses a simple broadcast network to propagate transactions, meaning that bandwidth use increases as a square of the number of nodes in terms of bandwidth overhead. For example, $10$x more nodes uses $100$x more network traffic. Right now there are approximately $6,500$ nodes, so every new node has $6,500$ nodes worth of communication to deal with.
+\end{enumerate}
+
+Any one of these characteristics prevents Bitcoin blockchain from scaling up.
+
+\subsection{Blockchain Scalability Efforts}
+The Bitcoin / blockchain community has spent considerable effort to scale performance of blockchains.
+The Appendix gives reviews these proposals in more detail.
+
+Most effort has been on improving one characteristic: the consensus algorithm, for example via proof of stake (POS).
+To our knowledge, no previous work has addressed all three issues.
+So, a necessary but not sufficient constraint in BigchainDB design is to avoid these three technology choices.
+
+What previous approaches share in common is that they are all starting with a blockchain design, then trying to increase its performance.
+There’s another way: start with a “big data” distributed database, then give it blockchain-like characteristics.

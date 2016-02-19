@@ -1,0 +1,128 @@
+\section{Blockchain Scalability Proposals}\label{appendix:blockchain_scalability}
+
+Here, we review some proposals to solve the Strong Byzantine Generals’ (SBG) problem while scaling the blockchain, and to allow blockchain-like behavior at greater scales.
+This list is not intended to be exhaustive.
+
+\subsection{Base Consensus Approaches}
+
+Consensus refers to the way nodes on a blockchain network approve or reject new transactions.
+These approaches differ in (a) how a node becomes a voting node, and (b) how each node’s voting weight is set.
+These choices can impact the blockchain’s performance.
+
+\medskip
+\noindent\textbf{Proof of Work (POW).} POW is the baseline approach used by the Bitcoin blockchain.
+There is no restriction on who can enter the network as a voter. 
+A node is chosen at random, proportional to the processing ability it brings to the network, according to a mathematical puzzle — its “hash rate”. 
+Work \cite{back2002hashcash} may be SHA256 hashing (the algorithm used by Bitcoin), scrypt hashing (used by Litecoin), or something else.
+
+POW has a natural tendency towards centralization. It is a contest to garner the most hashing power. Power is currently held by a handful of mining pools.
+
+\medskip
+\noindent\textbf{Proof of Stake (POS)} \cite{bitcoin2015pos}. In the POS model, there is no restriction on who can enter the network. 
+To validate a block, a node is chosen at random, proportionally to how much “stake” it has. 
+“Stake” is a function of the amount of coin held, and sometimes of “coin age, a measurement of how many days have passed since last time the coin voted.
+
+POS promises lower latency and does not have the extreme computational requirements of POW.
+
+However, over the last couple years, POS proposals have evolved as issues are identified (e.g. “nothing at stake,” “rich get richer,” and “long range attacks”) and fixes proposed. 
+These fixes have resulted in POS protocols becoming increasing complex. 
+Complex systems generally have more vulnerabilities, compromising security.
+
+\medskip
+\noindent\textbf{Federation.} A federated blockchain is composed of a number of nodes operating under rules set for or by the group. 
+Each member of a federation typically has an equal vote, and each federation has its own rules about who can join as voting node. 
+Typically, the majority or 2/3 of the voting nodes need to agree, for a transaction or block to be accepted (“quorum”).
+
+Federations may have of any number of voting nodes.
+More nodes mean higher latency, and less nodes means the federation is not as decentralized as many would like.
+Besides voting nodes, other nodes may have permission to issue assets, transfer assets, read, and so on (super-peer P2P network).
+
+Membership rules for voting nodes can vary widely between models.
+In the (pre-acquisition) Hyperledger model, the requirement was having a TLD and SSL certificate \cite{bitsmith2014hyperledger}. 
+In the original Stellar model, membership was based on a social network, until it was forked \cite{kim2014safety}. 
+In Tendermint \cite{kwon2014tendermint}, Slasher \cite{buterin2014slasher, buterin2014slasher_ghost}, and Casper \cite{zamfir2015casper}, anyone could join by posting a fixed bond as a security deposit, which would be lost if the voting node were to act maliciously\footnote{These are arguably proof of stake. It depends whether one’s definition of “proof of stake” means “has a stake, anywhere” versus “degree of voting power is a function of amount at stake”.}.
+
+Membership rules can directly affect the size of the federation.
+For example, in Tendermint, the lower the security deposit (bond), the more voting nodes there are likely to be.
+
+Federations imply that to be a voting node, one must reveal their identity.
+This means they are not as suitable where censorship resistance is a key design spec.
+This is different than POW and POS.
+
+\subsection{Consensus Mashups}
+The base consensus approaches described above can be creatively combined.
+
+\medskip
+\noindent\textbf{Hierarchy of POW—Centralized.} Big Bitcoin exchanges operate their own internal DBs of transactions, then synchronize a summary of transactions with the Bitcoin blockchain periodically. 
+This is similar to how stock exchange “dark pools” operate—financial institutions make trades outside the public stock exchange, and periodically synchronize with the public exchange.
+
+\medskip
+\noindent\textbf{Hierarchy of Small Federation—Big Federation.} An example is AI Coin \cite{aicoin}. 
+The top level has 5 power nodes with greater influence, and the bottom level has 50 nodes with less influence.
+
+\medskip
+\noindent\textbf{Hierarchy of POW—Federation.} An example is Factom \cite{factom}. 
+The bottom level is a document store; then document hashes are grouped together in higher and higher levels, Merkle tree style; and the top level the Merkle tree root is stored on the Bitcoin blockchain.
+
+\medskip
+\noindent\textbf{POW then POS.} An example is the Ethereum rollout plan. 
+The Ethereum team realized that if only a few coins were in circulation in a POS model, it would be easy for a bad actor to dominate by buying all the coins, and that they needed more time to develop an efficient yet trustworthy POS algorithm. 
+Therefore, Ethereum started with POW mining to build the network and get coins into wider circulation, and plans to switch once there are sufficient coins and the POS approach is ready.
+
+\medskip
+\noindent\textbf{X then Centralized then X’.} This model is applied when the consensus algorithm being used gets broken. 
+Voting is temporarily handled by the project’s managing entity until a fixed version of the algorithm is developed and released. 
+This happened with Stellar. Stellar started as a federation but the project was split in a fork \cite{kim2014safety}. 
+Stellar ran on a single server in early 2015 while a new consensus protocol \cite{mazieres2015stellar} was developed and released in April 2015 \cite{kim2014stellar}. 
+The new version is like a federation, but each node chooses which other nodes to trust for validation \cite{mazieres2015stellar}. 
+Another example of this model is Peercoin, one of the first POS variants. After a fork in early 2015, the developer had to sign transactions until a fix was released \cite{peercoin}.
+
+\subsection{Engineering Optimizations}
+This section reviews some of the possible steps to improve the efficiency and throughput of existing blockchain models.
+
+\medskip
+\noindent\textbf{Shrink Problem Scope.} This range of optimizations aims to make the blockchain itself smaller. 
+One trick to minimize the size of a blockchain is to record only unspent outputs. 
+This works if the history of transactions is not important, but in many blockchain applications, from art provenance to supply chain tracking, history is crucial. 
+Another trick, called Simple Payment Verification (SPV), is to store only block headers rather than the full block. 
+It allows a node to check if a given transaction is in the block without actually holding the transactions. 
+Mobile devices typically use Bitcoin SPV wallets. Cryptonite is an example that combines several of these tricks \cite{cryptonite}. 
+These optimizations makes it easier for nodes to participate in the network, but ultimately does not solve the core consensus problem.
+
+\medskip
+\noindent\textbf{Different POW hashing algorithm.} This kind of optimization seeks to make the hashing work performed by the network more efficient. 
+Litecoin is one of several models using scrypt hashing instead of Bitcoin’s SHA256 hashing, requiring about 2/3 less computational effort than SHA256. 
+This efficiency gain does not improve scalability, because it still creates a hash power arms race between miners.
+
+\medskip
+\noindent\textbf{Compression.} Data on a blockchain has a particular structure, so it is not out of the question that the right compression algorithm could reduce size by one or more orders of magnitude. 
+This is a nice trick without much compromise for a simple transaction ledger. 
+Compression typically hinders the ability to efficiently query a database.
+
+\medskip
+\noindent\textbf{Better BFT Algorithm.} The first solution to the Byzantine Generals’ problem was published in 1982 \cite{lamport1982byzantine}, and since that time many proposals have been published at distributed computing conferences and other venues. 
+Modern examples include Aardvark \cite{clement2009making} and Redundant Byzantine Fault Tolerance (RBFT) \cite{aublin2013rbft}. 
+These proposals are certainly useful, but in on their own do not address the need for Sybil tolerance (attack of the clones problem).
+
+\medskip
+\noindent\textbf{Multiple Independent Chains.} Here, the idea is to have multiple blockchains, with each chain focusing on a particular set of users or use cases and implementing a model best suited to those use cases. 
+The countless centralized DBs in active use operate on this principle right now; each has a specific use case. 
+We should actually expect this to happen similarly with blockchains, especially privately deployed ones but also for public ones. 
+It is the blockchain version of the Internet’s Rule 34: “If it exists there is blockchain of it.”
+
+For public examples, you could use Ethereum if you want decentralized processing, Primecoin if you want POW to be slightly more helpful to the world, and Dogecoin if you want much cute, very meme. 
+For private examples, organizations and consortiums will simply deploy blockchains according to their specific needs, just as they currently deploy DBs and other compute infrastructure.
+
+A challenge lies in security: if the computational power in a POW blockchain or coin value in a POS blockchain is too low, they can be overwhelmed by malicious actors. 
+However, in a federation model, this could be workable, assuming that an individual blockchain can meet the specific use case’s performance goals, in particular throughput and latency.
+
+\medskip
+\noindent\textbf{Multiple Independent Chains with Shared Resources for Security.} Pegged sidechains are the most famous example, where mining among chains has the effect of being merged \cite{back2002hashcash}. 
+SuperNET \cite{galt2014supernet} and Ethereum’s hypercubes and multichain proposals \cite{buterin2014hypercubes} fit in this category. 
+However, if the goal is simply to get a DB to run at scale, breaking the DB into many heterogeneous sub-chains adds cognitive and engineering complexity and introduces risk.
+
+\medskip
+\noindent\textbf{$\dots$and more}. The models described above are just a sampling. 
+There continue to be innovations (and controversy \cite{bitcoin-blocksize, popper2016bitcoin_crisis}). 
+For example, a proposed change to the Bitcoin blockchain called Bitcoin-NG \cite{eyal2015bitcoin} aims to reduce the time to first confirmation while minimizing all other changes to the Bitcoin blockchain design. 
+The Bitcoin roadmap \cite{bitcoin2015capacity, maxwell2015capacity} contains many other ideas, most notably segregated witness \cite{wuille_segregated_witness}.

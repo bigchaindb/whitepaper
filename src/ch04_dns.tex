@@ -1,0 +1,45 @@
+\section{Case Study: DNS as a Decentralized Internet-scale Database}\label{sec:dns}
+
+\subsection{Introduction}
+In the previous section, we reviewed big data” distributed databases (DBs), highlighting their Internet-level scalability properties and solid foundation in consensus via Paxos.
+We also highlighted the core weakness: centralized control where a trusted third party is always holding the keys.
+
+We are left with the question: Are there any precedents for distributed DBs going not only to Internet scale, but in a decentralized and trusted fashion?
+
+There is one DB that not only operates at Internet scale, but also has decentralized control, and is crucial to the functioning of the Internet as we know it: the Domain Name System (DNS).
+
+\subsection{History of DNS}
+
+By the early $1980$s, the rapid growth of the Internet made managing numeric domains a major bookkeeping headache \cite{dnshistory}.
+To address this, in $1983$ Jon Postel proposed the DNS.
+The DNS was originally implemented as a centralized DB, operated by the U.S. government.
+In $1993$ the U.S. government handed control to Network Solutions Inc. (NSI), a private corporation.
+
+NSI faced a dual challenge. It had to make the DNS function effectively, but in a way that took power away from any single major stakeholder, including the U.S. government and even NSI itself.
+David Holtzman, Chief Technology Officer of NSI, architected a solution: a federation of nodes spread around the globe, where each node’s interests were as orthogonal as possible to the interests of all the other nodes, in order to prevent collusion \cite{dnshistory}.
+Holtzman deployed this DB while NSI’s Chief Executive Officer, Jim Rutt, worked vigorously to hold off the objections of the U.S. Commerce Department and U.S. Department of Defence, which had hoped to maintain control \cite{schwartz2001badboy}.
+In the late 90s, NSI handed off DNS oversight to the Internet Corporation for Assigned Names and Numbers (ICANN), a new non-governmental, non-national organization \cite{dnshistory}.
+
+At its core, DNS is simply a mapping from a domain name (e.g. amazon.com) to a number (e.g. $54.93.255.255$).
+People trust the DNS because no one really controls it; it’s administered by ICANN.
+
+The DNS was architected to evolve and extend over time.
+For example, the original design did not include sufficient security measures, so the DNS Security Extensions (DNSSEC) were added to bring security while maintaining backwards compatibility \cite{icann2014dnssec}.
+
+It is hard to imagine something more Internet scale than the database underpinning the Internet’s domain name system.
+The decentralized DNS successfully deployed at Internet scale, both in terms of technology and governance.
+ICANN has not always been popular, but it has lasted and held the Internet together through its explosive growth, and survived heavy pressure from governments, corporations, and hackers.
+
+Domain names have digital scarcity via a public ledger that requires little extra trust by the user.
+There can be only one amazon.com in the DNS model. But DNS is a consensual arrangement.
+Anyone could create an alternative registry that could work in a similar manner, assigning amazon.com to someone else.
+The alternative registry would be near useless, however, because there is a critical mass of users that have already voted on which domain system will be in use, with their network devices by choosing what name server to use, and with their wallets by purchasing and using domain names within the existing DNS system.
+
+\subsection{Strengths and Weaknesses}
+\medskip
+\noindent\textbf{Weaknesses.} The DNS does not address the challenge of large scale data storage, or for the blockchain characteristics of immutability or creation \& transfer of assets.
+But, it didn’t aim to.
+
+\medskip
+\noindent\textbf{Strengths.} The DNS shows that decentralized control, in the form of federations, can work at Internet scale.
+It also demonstrates that it is crucial to get the right federation, with the right rules.

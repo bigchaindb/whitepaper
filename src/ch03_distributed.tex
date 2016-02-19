@@ -45,16 +45,16 @@ The scalability properties of distributed DBs like Cassandra make an excellent r
 \subsubsection{Introduction}
 Cassandra achieves its scale because it avoids scalability-killing decisions like making a full copy of all the data at every node, the baggage of mining, coins, and the like.
 
-What Cassandra does have is a consensus algorithm that uses $2f+1$ processes to tolerate $f$ benign processes \cite{lamport1998part}, which is used to get the distributed data to synchronize.
+What Cassandra does have is a consensus algorithm that uses $2f+1$ processors to tolerate $f$ benign processors\cite{lamport1998part}, which is used to get the distributed data to synchronize.
 
 Synchronizing distributed data was in fact the original motivation for the BG problem.
 The problem was first documented in $1980$ by Leslie Lamport and colleagues \cite{pease1980reaching}, and solved two years later, also by Lamport and colleagues.
-The solution is the Paxos protocol \cite{lamport1982byzantine} with versions that can tolerate $f$ Byzantine faults using $3f+1$ processes \cite{lamport2011byzantizing, castro2001byzantine}\footnote{Benign faults are system crashes, lost messages, and the like. In systems with benign faults, all nodes are assumed to follow the same protocol.
+The solution is the Paxos protocol \cite{lamport1982byzantine} with versions that can tolerate $f$ Byzantine faults using $3f+1$ processors \cite{lamport2011byzantizing, castro2001byzantine}\footnote{Benign faults are system crashes, lost messages, and the like. In systems with benign faults, all nodes are assumed to follow the same protocol.
 Byzantine faults include benign faults, but also deviations from the protocol, including lying, collusion, selective non-participation, and other arbitrary behavior.}.
 
 \subsubsection{Paxos Consensus Algorithm}\label{subsec:distributed:paxos}
 This section describes the origins of Paxos.
-In $1980$, Lamport challenged colleagues with the following question: \quote{Can you implement a distributed database that can tolerate the failure of any number of its processes (possibly all of them) without losing consistency, and that will resume normal behavior when more than half the processes are again working properly?} \cite{lamport_writings}
+In $1980$, Lamport challenged colleagues with the following question: \quote{Can you implement a distributed database that can tolerate the failure of any number of its processors (possibly all of them) without losing consistency, and that will resume normal behavior when more than half the processors are again working properly?} \cite{lamport_writings}
 
 It was generally assumed at the time that a three-processor system could tolerate one faulty processor.
 Lamport’s paper introduced the problem of handling “Byzantine” faults, in which a faulty processor sends inconsistent information to the other processors, which can defeat any traditional three-processor algorithm.

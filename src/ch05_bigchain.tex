@@ -379,7 +379,7 @@ In the algorithm, line $\mathtt{7}$ accepts transactions and loops through them;
       i $\sim$ U({0, 1, $\dots$, k-1, k+1, $\dots$, N-1}) # Stochastic. Any node but k avoids duplicate vote. 
       t.assign_time = time() 
       Si = Si $\cup$ t 
-      return S 
+    return S 
     
   def reassignOldTransactions(S, k): 
     for Sj in {S1, S2, $\dots$}: 

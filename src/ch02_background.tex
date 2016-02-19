@@ -35,7 +35,7 @@ The Bitcoin blockchain has taken three technology choices, which hurt scaling:
 \begin{enumerate}
  \item \textbf{Consensus Algorithm: POW.} Bitcoin’s mining rewards actually incentivizes nodes to increase computational resource usage, without any additional gains in throughput, latency, or capacity. A single confirmation from a node takes $10$ minutes on average, and six confirmations take an hour. In Bitcoin this is by design; Litecoin and other altcoins reduce the latency, but compromise security.
  \item \textbf{Replication: Full.} That is, each node stores a copy of all the data; a “full node”. This copy is typically kept on a single hard drive (or in memory). Ironically, this causes centralization: as amount of data grows, only those with the resources to hold all the data will be able to participate.
- \item \textbf{Communication Protocol: Broadcast.} Bitcoin uses a simple broadcast network to propagate transactions, meaning that bandwidth use increases as a square of the number of nodes in terms of bandwidth overhead. For example, $10$x more nodes uses $100$x more network traffic. Right now there are approximately $6,500$ nodes, so every new node has $6,500$ nodes worth of communication to deal with.
+ \item \textbf{Communication Protocol: P2P Gossip.} Bitcoin uses a simple peer-to-peer gossip network to propagate transactions, meaning that bandwidth use increases as a square of the number of nodes in terms of bandwidth overhead. For example, $10$x more nodes uses $100$x more network traffic. Right now there are approximately $6,500$ nodes, so every new node has $6,500$ nodes worth of communication to deal with.
 \end{enumerate}
 
 Any one of these characteristics prevents Bitcoin blockchain from scaling up.

@@ -17,23 +17,23 @@ An entire block occupies about $900$KB.
 In $\mathtt{hard}$ durability mode, writes are committed to disk before acknowledgments are sent; in $\mathtt{soft}$ mode, writes are acknowledged immediately after being stored in memory.
 
 This means that the insert will block until RethinkDB acknowledges that the data was cached.
-In each server we can start multiple process.
+In each server we can start multiple processes.
 
 \medskip
 \noindent\textbf{Write Units.} Let’s define \textit{$1$ write unit} as being 1 process.
-For example, in a $32$ node cluster, with each node running $2$ processes, we would have $64$ writes.
+For example, in a $32$ node cluster, with each node running $2$ processes, we would have $64$ write units.
 This will make it easier to compare different tests.
 
 \medskip
 \noindent\textbf{Sharding} in distributed datastores means partitioning a table so that the data can be evenly distributed between all nodes in the cluster.
-In RethinkDB and most distributed datastores there is a maximum limit of $32$ shards per table.
+In most distributed datastores, there is a maximum number of shards per table. For RethinkDB, that limit is $32$ shards per table.
 
-In RethinkDB a shard is also called a primary replica, since by default the replication factor is $1$.
-Increasing the replication factor produces secondary replicas that are used for data redundancy (if a node holding a primary replica goes down another node holding a secondary replica of the same data can step up and become the primary replica)
+In RethinkDB, a shard is also called a primary replica, since by default the replication factor is $1$.
+Increasing the replication factor produces secondary replicas that are used for data redundancy. If a node holding a primary replica goes down, another node holding a secondary replica of the same data can step up and become the primary replica.
 
 \medskip
 \noindent\textbf{Compute Resources.} For these tests we are using $32$-core AWS EC2 instances with SSD storage and 10Gbps network connections ($\mathtt{c3.8xlarge}$).
-For the tests we used either $32$ or $64$ node clusters all running on the same AWS region.
+For the tests, we used either $32$- or $64$-node clusters all running in the same AWS region.
 
 \subsection{Experiments on Throughput}
 The experimental setup is like the setup described in section \ref{subsec:benchmarks_setup}. 
@@ -45,7 +45,7 @@ The experimental setup is like the setup described in section \ref{subsec:benchm
 \begin{itemize}
  \item \textbf{Number of nodes:} $32$
  \item \textbf{Number of processes:} $2$ processes per node
- \item \textbf{Write units:} $32 \times 2 = 64$ writes
+ \item \textbf{Write units:} $32 \times 2 = 64$ write units
 \end{itemize}
 
 \medskip
@@ -72,7 +72,7 @@ Or, that each write unit produces an output of $(1000/64) \approx 64$ writes per
   \item$16$ nodes running $2$ processes
   \item$16$ nodes running $3$ processes
  \end{itemize}
- \item \textbf{Write units:} $16 \times 3 + 16 \times 2 = 80$ writes
+ \item \textbf{Write units:} $16 \times 3 + 16 \times 2 = 80$ write units
  \item \textbf{Expected output:} $1.25$K writes per second
 \end{itemize}
 
@@ -94,7 +94,7 @@ Increasing a bit the number of write units shows an increase in output close to 
   \item$16$ nodes running $2$ processes
   \item$16$ nodes running $4$ processes
  \end{itemize}
- \item \textbf{Write units:} $16 \times 4 + 16 \times 2 = 96$ writes
+ \item \textbf{Write units:} $16 \times 4 + 16 \times 2 = 96$ write units
  \item \textbf{Expected output:} $1.5$K writes per second
 \end{itemize}
 
@@ -114,7 +114,7 @@ Another problem is that as the RethinkDB cache fills (because the RethinkDB is n
 \begin{itemize}
  \item \textbf{Number of nodes:} $64$
  \item \textbf{Number of processes:} $1$ process per node
- \item \textbf{Write units:} $64 \times 1 = 64$ writes
+ \item \textbf{Write units:} $64 \times 1 = 64$ write units
  \item \textbf{Expected output:} $1$K writes per second
 \end{itemize}
 
@@ -136,7 +136,7 @@ The IO in the nodes holding the primary replica is the same has Experiment \ref{
 \begin{itemize}
  \item \textbf{Number of nodes:} $64$
  \item \textbf{Number of processes:} $2$ process per node
- \item \textbf{Write units:} $64 \times 2 = 128$ writes
+ \item \textbf{Write units:} $64 \times 2 = 128$ write units
  \item \textbf{Expected output:} $2000$ writes per second
 \end{itemize}
 
@@ -159,7 +159,7 @@ We are able to reach the expected output, but the output performance is unstable
   \item$32$ nodes running $1$ processes
   \item$32$ nodes running $2$ processes
  \end{itemize}
- \item \textbf{Write units:} $32 \times 2 + 32 \times 1 = 96$ writes
+ \item \textbf{Write units:} $32 \times 2 + 32 \times 1 = 96$ write units
  \item \textbf{Expected output:} $1.5$K writes per second
 \end{itemize}
 

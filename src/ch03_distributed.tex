@@ -3,14 +3,12 @@
 \subsection{Introduction}
 We ask: does the world have any precedents for \textit{distributed databases} at massive scale? The answer is yes.
 All large Internet companies, and many small ones, run “big data” distributed databases (DBs), including Facebook, Google, Amazon and Netflix.
-For example, at any given time Netflix might be serving up content making up $35\%$ of the bandwidth of the entire Internet \cite{spangler2014netflix}.
 
 Distributed DBs regularly store petabytes ($1,000,000$ GB) or more worth of content. 
 In contrast, the Bitcoin blockchain currently stores $50$ GB, the capacity of a modern thumb drive.
-There are initiatives to prevent “blockchain bloat” caused by “dust” or “junk” transactions that “pollute” Bitcoin’s $50$ GB database \cite{wagner2014blockchain_bloat}.
+Despite it's relatively-small data size, members of the Bitcoin community worry that it is getting too big. In fact, there are initiatives to prevent “blockchain bloat” caused by “dust” or “junk” transactions that “pollute” Bitcoin’s $50$ GB database \cite{wagner2014blockchain_bloat}.
 
-In light of petabyte-capacity DBs, it is ironic that a $50$ GB database would be concerned by “bloat”.
-But let’s look at it another way: perhaps distributed DB technology has lessons for blockchain DB design.
+Let’s look at it another way: perhaps distributed DB technology has lessons for blockchain DB design.
 
 \medskip
 \centerline{Let’s explore distributed DB scalability further.}
@@ -19,15 +17,15 @@ But let’s look at it another way: perhaps distributed DB technology has lesson
   \centering
   \includegraphics[width=\textwidth]{figure_2.pdf}
   \caption{Netflix experimental data on throughput of its Cassandra database (Client writes/s by node count - Replication Factor=$3$).
-  The x-axis is number of nodes; the y-axis is transactions per second. From \cite{cockcroft2011benchmarking}.}
+  The x-axis is number of nodes; the y-axis is writes per second. From \cite{cockcroft2011benchmarking}.}
   \label{fig:cassandra_throughput}
 \end{figure}
 
 \medskip
 Figure \ref{fig:cassandra_throughput} illustrates the throughput properties of Cassandra, a distributed DB technology used by Netflix.
-At the bottom left of the plot, we see that $50$ distributed Cassandra nodes handle $174,000$ tps.
-Increasing to $300$ nodes gives $1.1$ million transactions per second (tps) \cite{cockcroft2011benchmarking}.
-A follow-up study three years later showed a throughput of $1$ million tps with just a few dozen nodes \cite{kalantzis_netflix}.
+At the bottom left of the plot, we see that $50$ distributed Cassandra nodes could handle $174,000$ writes per second.
+Increasing to $300$ nodes allowed for $1.1$ million writes per second \cite{cockcroft2011benchmarking}.
+A follow-up study three years later showed a throughput of $1$ million writes per second with just a few dozen nodes \cite{kalantzis_netflix}.
 To emphasize: the throughput of this DB increased as the number of nodes increased. The scaling is linear: $10\times$ more nodes means $(10c)\times$ more throughput, where $0 < c \leq 1$.
 
 Each node also stores data.
@@ -41,61 +39,54 @@ Contrast this to the Bitcoin blockchain, where capacity does not change as the n
 
 The scalability properties of distributed DBs like Cassandra make an excellent reference target.
 
-\subsection{Consensus Algorithms in Distributed Databases}
+\subsection{Consensus Algorithms in Distributed Databases}\label{subsec:consensus}
 \subsubsection{Introduction}
-Cassandra achieves its scale because it avoids scalability-killing decisions like making a full copy of all the data at every node, the baggage of mining, coins, and the like.
+As mentioned above, Cassandra keeps only some of the data in each node. Each bit of data is replicated on several nodes. The nodes responsible for replicating a bit of data use a consensus algorithm to ensure they agree on what to store. Cassandra uses the Paxos consensus algorithm; the relevant nodes will reach agreement even if some of them are unresponsive.
 
-What Cassandra does have is a consensus algorithm that uses $2f+1$ processors to tolerate $f$ benign processors\cite{lamport1998part}, which is used to get the distributed data to synchronize.
+The Paxos consensus algorithm is one of many algorithms designed to solve the \emph{consensus problem} in unreliable distributed systems. Loosely speaking, the consensus problem is the problem of figuring out how to get a bunch of isolated computing nodes to agree on something, when some of them may be faulty, and they can only communicate by two-party messages. A solution takes the form of a consensus algorithm/protocol used by all of the non-faulty nodes.
 
-Synchronizing distributed data was in fact the original motivation for the BG problem.
-The problem was first documented in $1980$ by Leslie Lamport and colleagues \cite{pease1980reaching}, and solved two years later, also by Lamport and colleagues.
-The solution is the Paxos protocol \cite{lamport1982byzantine} with versions that can tolerate $f$ Byzantine faults using $3f+1$ processors \cite{lamport2011byzantizing, castro2001byzantine}\footnote{Benign faults are system crashes, lost messages, and the like. In systems with benign faults, all nodes are assumed to follow the same protocol.
-Byzantine faults include benign faults, but also deviations from the protocol, including lying, collusion, selective non-participation, and other arbitrary behavior.}.
+\subsubsection{Byzantine Fault Tolerance}
+One of the first precise statements of the consensus problem was in a 1980 paper by Pease, Shostak and Lamport \cite{pease1980reaching,lamport_writings}. That paper allowed the faulty nodes to have arbitrary faults; for example, they could lie, collude, selectively participate, or pretend to be crashed. Such arbitrary faults are also known as \emph{Byzantine faults}, after a 1982 follow-up paper on the same problem \cite{lamport1982byzantine} which called it the ``Byzantine Generals Problem.'' A consensus algorithm which enables a distributed system to come to consensus despite Byzantine faults is said to be \emph{Byzantine fault tolerant} (BFT).
 
-\subsubsection{Paxos Consensus Algorithm}\label{subsec:distributed:paxos}
-This section describes the origins of Paxos.
-In $1980$, Lamport challenged colleagues with the following question: \quote{Can you implement a distributed database that can tolerate the failure of any number of its processors (possibly all of them) without losing consistency, and that will resume normal behavior when more than half the processors are again working properly?} \cite{lamport_writings}
+The 1980 paper had several nice results:
+a proof that at least $3f+1$ nodes are needed,
+an example (inefficient) solution with $3f+1$ nodes, 
+and a proof that there is \emph{no} solution with less than $3f+1$ nodes.
+It also considered what's possible if message authentication is used (i.e. if a node changes a message before relaying it to another node, then the change can be detected). In that case, $2f+1$ nodes suffice.
 
-It was generally assumed at the time that a three-processor system could tolerate one faulty processor.
-Lamport’s paper introduced the problem of handling “Byzantine” faults, in which a faulty processor sends inconsistent information to the other processors, which can defeat any traditional three-processor algorithm.
-In general, $3f+1$ processors are needed to tolerate $f$ faults.
-However, if digital signatures are used, $2f+1$ processors are enough.
-This was the first precise statement of the consensus problem \cite{lamport1982byzantine}.
+\subsubsection{(Benign) Fault Tolerance}
+One of the most common ways for a node to be faulty is for it to be unresponsive. That can happen, for example, if a hard drive fails or a CPU overheats. Such faults are known as \emph{benign faults} or \emph{fail-stop faults}. A consensus algorithm which enables a distributed system to come to consensus despite benign faults is said to be \emph{fault tolerant} (FT). (It would be more precise to say ``benign-fault tolerant,'' but it's not up to us.) In general, fault-tolerant consensus algorithms require at least $2f+1$ nodes to be able to tolerate up to $f$ faulty nodes.
 
-Lamport then set out to prove the problem was impossible to solve \cite{lamport_writings}.
-Instead, in a happy accident, he discovered the Paxos algorithm \cite{lamport1998part}.
+\subsubsection{Paxos}
+The best-known fault-tolerant consensus algorithm is Paxos; it was first published by Lamport in 1998 \cite{lamport1998part}. Since then, many variations have been developed (e.g. ``Fast Paxos'' \cite{lamport2006fast}) so there is now a whole family of Paxos algorithms, including some that are BFT. \cite{lamport2011byzantizing}
 
-At the heart of Paxos is a three-phase consensus protocol.
-Lamport wrote, “to my knowledge, Paxos contains the first three-phase commit algorithm that is a real algorithm, with a clearly stated correctness condition and a proof of correctness” \cite{lamport_writings}.
-Paxos overcame the impossibility result of Fischer et al. \cite{fischer1985impossibility} by using clocks to ensure liveness.
+Mike Burrows of Google (co-inventor of Google’s Chubby, BigTable, and Dapper) has said, ``There is only one consensus protocol, and that’s Paxos,'' \cite{robinson2009paxos} and ``all working protocols for asynchronous consensus we have so far encountered have Paxos at their core.'' \cite{burrows2006chubby}
+Henry Robinson of Cloudera has said, ``all other approaches are just broken versions of Paxos'' and ``it’s clear that a good consensus protocol is surprisingly hard to find.'' \cite{robinson2009paxos}
 
-\subsection{Extensions to Paxos Consensus}
-The original Paxos could handle arbitrary benign (non-Byzantine) failures such as network delays, packet loss, system crashes and so on.
+Paxos and its lineage are used at Google, IBM, Microsoft, OpenReplica, VMWare, XtreemFS, Heroku, Ceph, Clustrix, Neo4j, and many more. \cite{wiki_paxos}
 
-Several Byzantine fault tolerant systems were designed in the 1980s \cite{wiki_byzantine}, including Draper's FTMP \cite{paulitsch2005coverage}, Honeywell's MMFCS \cite{hopkins1987evolution}, and SRI's SIFT \cite{driscoll1983multi}.
+Paxos is notoriously difficult to understand and risky to implement.
+To address this, Raft \cite{ongaro2014raft} was designed specifically for ease of understanding, and therefore has lower implementation risk.
+Raft has a BFT variant named Tangaroa. \cite{copeland2014tangaroa}
 
-However, those early systems were slow when it came to faults.
-Lamport’s “Fast Paxos” \cite{lamport2006fast} and Castro’s “Practical Byzantine Fault Tolerance” (PBFT) \cite{castro2001byzantine} improved upon speed under malicious conditions.
-Aardvark \cite{clement2009making} and RBFT \cite{aublin2013rbft} are examples of continued research in speed and reliability.
+\subsubsection{The FLP Result}
+An \emph{asynchronous node} is a node which can't promise it will get back to you with a result within some time limit. It's common to model nodes as being asynchronous, especially for large systems spread all over the globe (such as the World Wide Web). An \emph{asynchronous consensus protocol} is one that works with asynchronous nodes.
 
-Paxos is notoriously difficult to understand, and risky to implement.
-To address this, Raft \cite{ongaro2014raft} was designed specifically for ease of understanding, and consequent lower implementation risk.
-It has a robust variant \cite{copeland2014tangaroa}.
+In 1985, Fischer, Lynch and Paterson (FLP) published a surprising result: ``no completely asynchronous consensus protocol can tolerate even a single unannounced process death [i.e. benign fault].'' \cite{fischer1985impossibility} If that's the case, then it seems there's little hope for tolerating more faults (or other kinds of faults)! Practical consensus algorithms can get around the ``FLP result'' by assuming some kind of synchrony (e.g. ``partial synchrony'' or ``weak synchrony''), or by allowing some form of probablistic consensus (e.g. with the probability of consensus approaching 1 over time).
 
-The recent Stellar protocol allows each node to choose which other nodes to trust for validation \cite{mazieres2015stellar}.
+Bitcoin's consensus algorithm does the latter: one can never be sure that the Bitcoin network has come to consensus about a block being in the final blockchain: there's always the possibility that block might be in a side branch. All one can do is estimate the probability that a block is in the final blockchain.
 
-\subsection{Usage / Ecosystem}
-Mike Burrows of Google (co-inventor of Google’s Chubby, BigTable, and Dapper) has said ``There is only one consensus protocol, and that’s Paxos,'' \cite{robinson2009paxos} and ``all working protocols for asynchronous consensus we have so far encountered have Paxos at their core'' \cite{burrows2006chubby}.
-Henry Robinson of Cloudera has said ``all other approaches are just broken versions of Paxo'' and ``it’s clear that a good consensus protocol is surprisingly hard to find.'' \cite{robinson2009paxos}\footnote{An especially interesting statement in light of efforts the Bitcoin community is spending on consensus algorithms.}.
+\subsubsection{Practical BFT Consensus Algorithms}
+The early BFT consensus algorithms were either slow \& expensive, or intended for synchronous systems \cite{wiki_byzantine,paulitsch2005coverage,hopkins1987evolution,driscoll1983multi}. That all changed in 1999, when Castro and Liskov published their paper titled ``Practical Byzantine Fault Tolerance'' (PBFT) \cite{castro1999practical,castro2001byzantine}. As the title suggests, it described a more practical (usable) BFT consensus algorithm, and kicked off a flurry of research into practical BFT consensus algorithms.
+That research continues today. Aardvark \cite{clement2009making}, RBFT \cite{aublin2013rbft} and Stellar \cite{mazieres2015stellar} are examples of algorithms aimed at improving speed and reliability.
 
-Paxos and its lineage is used at Google, IBM, Microsoft, OpenReplica, VMWare, XtreemFS, Heroku, Ceph, Clustrix, Neo4j, and certainly many more \cite{wiki_paxos}.
 
-\subsection{Replication factor \& blockchain “full nodes”}
+\subsection{Replication Factor \& Blockchain “Full Nodes”}
 A modern distributed DB is designed to appear like a single monolithic DB, but under the hood it distributes storage across a network holding many cheap storage devices.
 Each data record is stored redundantly on multiple drives, so if a drive fails the data can still be easily recovered.
 If only one disk fails at a time, there only needs to be one backup drive for that data.
 The risk can be made arbitrarily small, based on assumptions of how many disks might fail at once.
-Modern distributed DBs typically have 3 backups per data object, a replication factor of $3$ \cite{wiki_raid}.
+Modern distributed DBs typically have three backups per data object, i.e. a replication factor of $3$ \cite{wiki_raid}.
 
 In contrast, Bitcoin has about $6,500$ full nodes \cite{bitcoin2015fees}—a replication factor of $6,500$.
 The chance of all nodes going down at once in any given hour (assuming complete independence) is $(1/8760)^{6500}$, or $10^{-25626}$.
@@ -103,15 +94,15 @@ The chance of all nodes going down would occur once every $3,000$ billion years.
 
 Of course, hardware failure is not the only reason for lost data.
 Attacks against the nodes of the network have a much higher probability of destroying data.
-A well-targeted attack to $2$ or $3$ mining pools could just remove $50\%$ of the computing power from the current Bitcoin network, making the network unusable until the next adjustment to POW complexity, which happens about every two weeks.
+A well-targeted attack to two or three mining pools could remove $50\%$ of the computing power from the current Bitcoin network, making the network unusable until the next adjustment to POW complexity, which happens about every two weeks.
 
 \subsection{Strengths and Weaknesses}
-Let’s review the strengths and weaknesses of DBs that use Paxos-style distributed consensus algorithms.
+Let’s review the strengths and weaknesses of DBs that use distributed consensus algorithms such as Paxos.
 
 \medskip
-\noindent\textbf{Strengths.} As discussed above, Paxos is a proven consensus algorithm that tolerates benign faults and extensions for Byzantine tolerance have been reported.
+\noindent\textbf{Strengths.} As discussed above, Paxos is a field-proven consensus algorithm that tolerates benign faults (and extensions for Byzantine tolerance have been developed).
 It is used by “big data” distributed DBs with the well-documented ability to handle high throughput, low latency, high capacity, efficient network utilization, and any shape of data, including table-like SQL interfaces, object structures of NoSQL DBs, and graph DBs, and they handle replication in a sane fashion.
-Derivatives like Raft make distributed consensus systems easier to design and deploy.
+Raft, a Paxos derivative, makes distributed consensus systems easier to design and deploy.
 
 \medskip
 \noindent\textbf{Weaknesses.} While their technical attributes and performance are impressive, traditional “big data” distributed DBs are not perfect: they are centralized.

@@ -149,7 +149,7 @@ We can specify the encoding, separators used and enforce it to order by the keys
 \begin{itemize}
  \item $\mathtt{skipkeys}$: With skipkeys $\mathtt{False}$ if the provided keys are not a string the serialization will fail. This way we enforce all keys to be strings
  \item $\mathtt{ensure\_ascii}$: The RFC recommends utf-8 for maximum interoperability. By setting $\mathtt{ensure\_ascii}$ to $\mathtt{False}$ we allow unicode characters and force the encoding to $\mathtt{utf-8}$. 
- \item $\mathtt{separators}$: We need to define a standard separator to use in the serialization. We did not do this different implementations could use different separators for serialization resulting in a still valid transaction but with a different hash e. g. an extra whitespace introduced in the serialization would still create a valid json object but the hash would be different
+ \item $\mathtt{separators}$: We need to define a standard separator to use in the serialization. If we did not do this, different implementations could use different separators for serialization, resulting in a still-valid transaction but with a different hash e.g. an extra whitespace introduced in the serialization would still create a valid JSON object but the hash would be different.
 \end{itemize}
 
 \subsubsection{Example}

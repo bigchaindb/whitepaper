@@ -13,7 +13,7 @@ Figure \ref{fig:bigchaindb_tx_life_1} and Figure \ref{fig:bigchaindb_tx_life_2} 
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=0.6\textwidth]{figure_12.pdf}
+  \includegraphics[width=0.6\textwidth]{figure_12_fixed.pdf}
   \caption{Life of a Transaction, Part 2/2}
   \label{fig:bigchaindb_tx_life_2}
 \end{figure}
@@ -47,15 +47,15 @@ The remainder of this section is focused on developing an estimate for $t_{\math
 Let’s start with some notation.
 There are many sources of latency within the BigchainDB cluster, but a key one is the time it takes information to travel from one node to another node. 
 Let’s call the typical one-hop node-to-node latency $t_{\mathtt{hop}}$. The duration of $t_{\mathtt{hop}}$ depends a lot on how the nodes are distributed. 
-If the nodes are all in one data center, then $t_{\mathtt{hop}}$ might be less than 1 ms. If the nodes are distributed globally, then $t_{\mathtt{hop}}$ might be $150$ ms.
+If the nodes are all in one data center, then $t_{\mathtt{hop}}$ might be less than 1~ms. If the nodes are distributed globally, then $t_{\mathtt{hop}}$ might be $150$~ms.
 
 Another key source of latency is query latency $t_{\mathtt{q}}$. 
 If a node queries the underlying (distributed) database, it might happen that the node itself already has all the information it needs to determine the result. 
-That is probably unusual. More typically, the required information is on one or more other nodes. 
+That is probably unusual, so we neglect that possibility. More typically, the required information is on one or more other nodes. 
 Getting that information requires at least two internal network hops: one to send the query out, and one to get information back. 
 For that case, we can write:
 \begin{equation}\label{eq:time_query}
-t_\mathtt{q} \le (2 \cdot t_\mathtt{hop}) + t_\mathtt{qp}
+t_\mathtt{q} \ge (2 \cdot t_\mathtt{hop}) + t_\mathtt{qp}
 \end{equation}
 where $t_\mathtt{qp}$ is the query processing time. 
 
@@ -63,7 +63,7 @@ If all nodes in the cluster are in one data center, then $t_\mathtt{hop}$ and $t
 
 Let’s return to figuring out a back-of-the-envelope estimate for $t_\mathtt{internal}$.
 In general, it could be quite large, because a transaction might bounce back and forth between the backlog $\mathbf{S}$ and the bigchain $\mathbf{C}$ before it finally ends up in a \textsf{\textit{decided\_verified}} block.
-What we \textit{can} do is determine an approximate \textit{minimum} $t_\mathtt{internal}$.
+What we \textit{can} do is determine an approximate \textit{minimum} $t_\mathtt{internal}$ (i.e. a lower bound).
 
 When $\mathbf{t}$ arrives at a BigchainDB node, the node does a superficial validation of $\mathbf{t}$ (i.e. not checking if it depends on a transaction in an undecided block). 
 That requires at least one query (e.g. to check if $\mathbf{t}$ does a double-spend), so the time required is at least $t_\mathtt{q}$. 
@@ -85,9 +85,9 @@ If $\mathbf{t}$ \textit{does} depend on a transaction in an \textsf{\textit{unde
 
 Suppose $\mathbf{t}$ is okayed for inclusion in a block. 
 Let’s call that block $\mathbf{B}(\mathbf{t})$. 
-$\mathbf{t}$ must wait for $\mathbf{B}(\mathbf{t})$ to accumulate $1000$ transactions (or whatever value the BigchainDB operator sets), or for a timeout to occur (e.g. $5$ seconds since the last transaction was added to the block). 
+$\mathbf{t}$ must wait for $\mathbf{B}(\mathbf{t})$ to accumulate $1000$ transactions (or whatever value the BigchainDB operator sets), or for a timeout to occur (e.g. five seconds since the last transaction was added to the block). 
 The timeout is to ensure that a block doesn’t wait forever for new transactions. 
-When there are lots of new transactions coming in, the time t spends waiting for $\mathbf{B}(\mathbf{t})$ to fill up will typically be negligible compared to $t_\mathtt{hop}$, so we can ignore it.
+When there are lots of new transactions coming in, the time $\mathbf{t}$ spends waiting for $\mathbf{B}(\mathbf{t})$ to fill up will typically be negligible compared to $t_\mathtt{hop}$, so we can ignore it.
 
 The assigned node then writes $\mathbf{B}(\mathbf{t})$ to $\mathbf{C}$. It takes time for $\mathbf{B}(\mathbf{t})$ to propagate to all other nodes in the cluster: at least $t_\mathtt{hop}$.
 
@@ -119,37 +119,39 @@ If $\mathbf{B}(\mathbf{t})$ is \textsf{\textit{decided\_valid}}, then $\mathbf{t
 We can now estimate a minumum $t_\mathtt{internal}$ by adding up all the times outlined in the precedinging paragraphs:
 
 \begin{equation}
- t_\mathtt{internal} \le 3 \cdot t_\mathtt{q} + 3 \cdot t_\mathtt{hop}
+ t_\mathtt{internal} \ge 3 \cdot t_\mathtt{q} + 3 \cdot t_\mathtt{hop}
 \end{equation}
 
-Then, using eq. \eqref{eq:time_query}:
+Then, using Eq.~\eqref{eq:time_query}:
 
 \begin{equation}
- t_\mathtt{internal} \le 9 \cdot t_\mathtt{hop} + 3 \cdot t_\mathtt{qp} 
+ t_\mathtt{internal} \ge 9 \cdot t_\mathtt{hop} + 3 \cdot t_\mathtt{qp} 
 \end{equation}
 
 If the cluster nodes are widely-distributed, then $t_\mathtt{hop}$ is much larger than $t_\mathtt{qp}$ and:
 
 \begin{equation}
- t_\mathtt{internal} \le 9 \cdot t_\mathtt{hop}
+ t_\mathtt{internal} \ge 9 \cdot t_\mathtt{hop}
 \end{equation}
 
 As a rule of thumb for widely-distributed clusters, \textit{the minimum internal latency is about an order of magnitude larger than the one-hop node-to-node latency}. 
 (Remember that $t_\mathtt{internal}$ ignores client-to-BigchainDB network latency.)
 
+There are a few general cases, depending on how the BigchainDB nodes are distributed. Table \ref{tab:latency_comparison} summarizes.
+
 \begin{savenotes}
 \begin{table}[ht!]
-  \caption{Latency based on geography}
+  \caption{Latency based on geographic distribution of the cluster}
   \footnotesize
   \makebox[\textwidth][c]{
   \setlength\extrarowheight{3pt}
   \begin{tabular}{ | m{\dimexpr 0.3\linewidth-2\tabcolsep} |
 	  M{\dimexpr 0.35\linewidth-2\tabcolsep} |
 	  M{\dimexpr 0.35\linewidth-2\tabcolsep} |} \Xhline{4\arrayrulewidth}\rowcolor{black}
-    \color{white}How nodes are distributed    &  \color{white} One-hop node-to-node latency in the cluster ($t_\mathtt{hop}$) & \color{white} Cluster internal transaction latency ($t_\mathtt{internal}$) \\\Xhline{4\arrayrulewidth}
-    In one data center           & $\approx 0.25$ ms & $\le 2.25$ ms\footnote{This estimate doesn’t include the query-processing term ($3 \cdot t_\mathtt{qp}$), which might be about the same magnitude (i.e. milliseconds).} \\\hline
-    In one region (e.g. America) & $\approx 70$ ms   & $\le 630$ ms \\\hline
-    Spread globally              & $\approx 150$ ms  & $\le 1350$ ms \\
+    \color{white}How nodes are distributed    &  \color{white} One-hop node-to-node latency in the cluster ($t_\mathtt{hop}$) & \color{white} Minimum internal transaction latency in the cluster (minimum~$t_\mathtt{internal}$) \\\Xhline{4\arrayrulewidth}
+    In one data center           & $\approx 0.25$ ms & $\approx 2.25\ \mathrm{ms} + 3 \cdot t_\mathtt{qp}$ \\\hline
+    In one region (e.g. America) & $\approx 70$ ms   & $\approx 630$ ms \\\hline
+    Spread globally              & $\approx 150$ ms  & $\approx 1350$ ms \\
   \Xhline{4\arrayrulewidth}
   \end{tabular}
   }
@@ -157,6 +159,4 @@ As a rule of thumb for widely-distributed clusters, \textit{the minimum internal
 \end{table}
 \end{savenotes}
 
-There are a few general cases, depending on how the BigchainDB nodes are distributed. Table \ref{tab:latency_comparison} summarizes.
-
-The latency estimates in Table \ref{tab:latency_comparison} are order-of-magnitude approximations. They can be interpreted as guidelines for what to expect.
+There are a couple of caveats to keep in mind when reading Table~\ref{tab:latency_comparison}: 1)~The minimum internal latency estimates in Table \ref{tab:latency_comparison} are order-of-magnitude approximations. They should only be interpreted as \emph{guidelines} for what to expect. 2)~In a data center, the query latency $t_{\mathtt{qp}}$ may be similar in magnitude to $t_\mathtt{hop}$, so to get a better estimate of the minimum internal latency, one needs an estimate of $t_{\mathtt{qp}}$.

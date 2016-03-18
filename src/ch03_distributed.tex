@@ -43,19 +43,19 @@ The scalability properties of distributed DBs like Cassandra make an excellent r
 \subsubsection{Introduction}
 As mentioned above, Cassandra keeps only some of the data in each node. Each bit of data is replicated on several nodes. The nodes responsible for replicating a bit of data use a consensus algorithm to ensure they agree on what to store. Cassandra uses the Paxos consensus algorithm; the relevant nodes will reach agreement even if some of them are unresponsive.
 
-The Paxos consensus algorithm is one of many algorithms designed to solve the \emph{consensus problem} in unreliable distributed systems. Loosely speaking, the consensus problem is the problem of figuring out how to get a bunch of isolated computing nodes to agree on something, when some of them may be faulty, and they can only communicate by two-party messages. A solution takes the form of a consensus algorithm/protocol used by all of the non-faulty nodes.
+The Paxos consensus algorithm is one of many algorithms designed to solve the \emph{consensus problem} in unreliable distributed systems. Loosely speaking, the consensus problem is the problem of figuring out how to get a bunch of isolated computing processes to agree on something, when some of them may be faulty, and they can only communicate by two-party messages. A solution takes the form of a consensus algorithm/protocol used by all of the non-faulty processes.
 
 \subsubsection{Byzantine Fault Tolerance}
-One of the first precise statements of the consensus problem was in a 1980 paper by Pease, Shostak and Lamport \cite{pease1980reaching,lamport_writings}. That paper allowed the faulty nodes to have arbitrary faults; for example, they could lie, collude, selectively participate, or pretend to be crashed. Such arbitrary faults are also known as \emph{Byzantine faults}, after a 1982 follow-up paper on the same problem \cite{lamport1982byzantine} which called it the ``Byzantine Generals Problem.'' A consensus algorithm which enables a distributed system to come to consensus despite Byzantine faults is said to be \emph{Byzantine fault tolerant} (BFT).
+One of the first precise statements of the consensus problem was in a 1980 paper by Pease, Shostak and Lamport \cite{pease1980reaching,lamport_writings}. That paper allowed the faulty processes to have arbitrary faults; for example, they could lie, collude, selectively participate, or pretend to be crashed. Such arbitrary faults are also known as \emph{Byzantine faults}, after a 1982 follow-up paper on the same problem \cite{lamport1982byzantine} which called it the ``Byzantine Generals Problem.'' A consensus algorithm which enables a distributed system to come to consensus despite Byzantine faults is said to be \emph{Byzantine fault tolerant} (BFT).
 
 The 1980 paper had several nice results:
-a proof that at least $3f+1$ nodes are needed,
-an example (inefficient) solution with $3f+1$ nodes, 
-and a proof that there is \emph{no} solution with less than $3f+1$ nodes.
-It also considered what's possible if message authentication is used (i.e. if a node changes a message before relaying it to another node, then the change can be detected). In that case, $2f+1$ nodes suffice.
+a proof that at least $3f+1$ processes are needed,
+an example (inefficient) solution with $3f+1$ processes, 
+and a proof that there is \emph{no} solution with less than $3f+1$ processes.
+It also considered what's possible if message authentication is used (i.e. if a process changes a message before relaying it to another process, then the change can be detected). In that case, $2f+1$ processes suffice.
 
 \subsubsection{(Benign) Fault Tolerance}
-One of the most common ways for a node to be faulty is for it to be unresponsive. That can happen, for example, if a hard drive fails or a CPU overheats. Such faults are known as \emph{benign faults} or \emph{fail-stop faults}. A consensus algorithm which enables a distributed system to come to consensus despite benign faults is said to be \emph{fault tolerant} (FT). (It would be more precise to say ``benign-fault tolerant,'' but it's not up to us.) In general, fault-tolerant consensus algorithms require at least $2f+1$ nodes to be able to tolerate up to $f$ faulty nodes.
+One of the most common ways for a process to be faulty is for it to be unresponsive. That can happen, for example, if a hard drive fails or a CPU overheats. Such faults are known as \emph{benign faults} or \emph{fail-stop faults}. A consensus algorithm which enables a distributed system to come to consensus despite benign faults is said to be \emph{fault tolerant} (FT). (It would be more precise to say ``benign-fault tolerant,'' but it's not up to us.) In general, fault-tolerant consensus algorithms require at least $2f+1$ processes to be able to tolerate up to $f$ faulty processes.
 
 \subsubsection{Paxos}
 The best-known fault-tolerant consensus algorithm is Paxos; it was first published by Lamport in 1998 \cite{lamport1998part}. Since then, many variations have been developed (e.g. ``Fast Paxos'' \cite{lamport2006fast}) so there is now a whole family of Paxos algorithms, including some that are BFT. \cite{lamport2011byzantizing}
@@ -70,7 +70,7 @@ To address this, Raft \cite{ongaro2014raft} was designed specifically for ease o
 Raft has a BFT variant named Tangaroa. \cite{copeland2014tangaroa}
 
 \subsubsection{The FLP Result}
-An \emph{asynchronous node} is a node which can't promise it will get back to you with a result within some time limit. It's common to model nodes as being asynchronous, especially for large systems spread all over the globe (such as the World Wide Web). An \emph{asynchronous consensus protocol} is one that works with asynchronous nodes.
+An \emph{asynchronous process} is a process which can't promise it will get back to you with a result within some time limit. It's common to model processes as being asynchronous, especially for large systems spread all over the globe (such as the World Wide Web). An \emph{asynchronous consensus protocol} is one that works with asynchronous processes.
 
 In 1985, Fischer, Lynch and Paterson (FLP) published a surprising result: ``no completely asynchronous consensus protocol can tolerate even a single unannounced process death [i.e. benign fault].'' \cite{fischer1985impossibility} If that's the case, then it seems there's little hope for tolerating more faults (or other kinds of faults)! Practical consensus algorithms can get around the ``FLP result'' by assuming some kind of synchrony (e.g. ``partial synchrony'' or ``weak synchrony''), or by allowing some form of probablistic consensus (e.g. with the probability of consensus approaching 1 over time).
 

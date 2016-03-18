@@ -22,7 +22,8 @@ We used RethinkDB's System Statistics Table to record the write throughput over 
 \end{figure}
 
 Figure~\ref{fig:bigchain_throughput_vs_nodes} shows how write throughput increased every time a node was added.
-When the number of nodes reached $32$, the write throughput was just over $1$~million transactions per second (i.e.~$1000$ blocks written per second, with $1000$ transactions per block). (Note: In Figure~\ref{fig:bigchain_throughput_vs_nodes}, the y-axis label of ``Writes/s'' should be interpreted to mean ``Effective transaction-writes per second''. The same is true of Figure~\ref{fig:bigchain_writes_vs_nodes}.)
+When the number of nodes reached $32$, the write throughput was just over $1$~million transactions per second (i.e.~$1000$ blocks written per second, with $1000$ transactions per block).\footnote{
+In Figure~\ref{fig:bigchain_throughput_vs_nodes}, the y-axis label of ``Writes/s'' should be interpreted to mean ``Effective transaction-writes per second''. The same is true of Figure~\ref{fig:bigchain_writes_vs_nodes}.}
 
 \begin{figure}[!ht]
   \centering

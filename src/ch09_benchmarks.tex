@@ -2,7 +2,7 @@
 
 \subsection{Goals}
 
-BigchainDB's algorithms are designed to ``get out of the way'' of the underlying database, so we expect the main limiter on performance to be how that underlying database interacts with the physical compute resources (e.g.~write speed and IO among nodes).
+BigchainDB's algorithms are designed to ``get out of the way'' of the underlying database, so we expect the main limiter on performance to be how that underlying database interacts with the physical compute resources (e.g.~write speed and I/O among nodes).
 Because of that, and because BigchainDB is built on top of RethinkDB, we began with experiments to test the scalability properties of RethinkDB.
 
 Full benchmarks on the performance of BigchainDB will appear in the near future.
@@ -22,7 +22,7 @@ We used RethinkDB's System Statistics Table to record the write throughput over 
 \end{figure}
 
 Figure~\ref{fig:bigchain_throughput_vs_nodes} shows how write throughput increased every time a node was added.
-When the number of nodes reached $32$, the write throughput was just over $1$~million transactions per second (i.e.~$1000$ blocks written per second, with $1000$ transactions per block).\footnote{
+When the number of nodes reached $32$, the write throughput was just over $1$~million transactions per second (i.e.~$1000$ blocks written per second, with $1000$ valid transactions per block).\footnote{
 In Figure~\ref{fig:bigchain_throughput_vs_nodes}, the y-axis label of ``Writes/s'' should be interpreted to mean ``Effective transaction-writes per second''. The same is true of Figure~\ref{fig:bigchain_writes_vs_nodes}.}
 
 \begin{figure}[!ht]
@@ -36,4 +36,4 @@ Figure~\ref{fig:bigchain_writes_vs_nodes} shows data from the same experiment, e
 The plot is both boring and exciting: it shows how write throughput increases linearly with the number of nodes.
 
 \subsection{Other Experiments}
-Appendix~\ref{appendix:benchmarks} contains descriptions of further experiments.
+Appendix~\ref{appendix:benchmarks} contains descriptions and results of further experiments.

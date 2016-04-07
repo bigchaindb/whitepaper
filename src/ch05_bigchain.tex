@@ -254,11 +254,12 @@ Nodes vote on blocks after order becomes clear.
 When a block is created, it starts off \textsf{\textit{undecided}}.
 As soon as there is majority of positive votes for a block, or a majority of negative votes, the block goes from \textsf{\textit{undecided}} to \textsf{\textit{decided\_valid}} or \textsf{\textit{decided\_invalid}}, respectively.
 
-Note that, unlike a typical block chain, the Block Model doesn't have a top-level link to the previous block.
-Instead, it has a list of votes, and each vote has a reference to the id/hash of the previous block.
+Note that, unlike a typical block chain, the BigchainDB block model doesn't have a reference to the previous block.
+Instead, it has a list of votes, and each vote has a reference to the previous block (i.e.~the block that the voting node considered the previous block, based on its view of the changefeed). We say that ``chainification happens at \textit{voting} time.''
 
-If for some reason, the nodes disagree on the parent (e.g.~malicious nodes) one node can just mark the block as invalid and return the transactions to the backlog to try again.
-We say that, ``Chainification happens at \textit{voting} time.''
+Normally, all votes will reference the same previous block, but it's possible that different votes may claim that different blocks are the previous block. This can happen, for example, if a node goes down. When it comes back up, there's no reliable way to recover the order of the new blocks it missed while down. What should it put as the id/hash of the previous block? We will experiment with various options (e.g.~an id/hash value of ``null'' or the same id/hash as the majority of other votes).
+
+If a node goes down, it won't accumulate a long list of new blocks that it must vote on when it comes back up. That's because the list of expected voters (nodes) for a block is set when that block is created. If a node is down when a block is created, then it won't be put on the list of expected voters for that block.
 
 Block $\mathbf{B}_2$ has received three votes of five possible.
 In this example, all three votes are positive.
@@ -506,7 +507,7 @@ Line $\mathtt{6}$ gives potentially valid transactions another chance.
 \noindent $\mathtt{dependsOnUndecidedBlock()}$ clarifies what it means to depend on an undecided block.
 
 \subsection{Consensus Algorithm Checklist}
-As we were designing the BCA, we encountered some pitfalls and concerns that we subsequently resolved.
+As we were designing the BCA, we addressed some concerns described below.
 
 \medskip
 \noindent\textbf{Block construction order.}
@@ -517,7 +518,7 @@ When a node finalizes the creation of a block, that block must not allow any mor
 Is there transaction malleability because votes are not hashed?
 This may look like a problem, because a block’s hash can be propagated to its child block before all its votes are in.
 A preliminary answer would be to have a second chain of hashes that actually includes the votes.
-But the solution can be simpler than that: a single hash (without votes) is fine because the votes are digitally signed by the signing nodes, and therefore not malleable.
+But the solution can be simpler than that: a hash without votes is fine because the votes are digitally signed by the signing nodes, and therefore not malleable.
 
 \medskip
 \noindent\textbf{Dropping transactions.} 
@@ -539,7 +540,7 @@ When a client sends two transactions to the same node, that receiving node could
 \medskip
 \noindent\textbf{Database built-in communication vulnerability.} 
 The nodes communicate using the big data DB’s own built-in consensus algorithm like Paxos to tolerate benign failures. 
-Is this a vulnerability? The answer is that a majority of the network would need to be affected for it to have any major consequences.
+Is this a vulnerability? The answer is that many nodes would have to be affected for it to have any major consequences.
 
 \medskip
 \noindent\textbf{Double spends.} 
@@ -564,12 +565,10 @@ So to our knowledge, the system administrator cannot play god because all write 
 \medskip
 \noindent\textbf{Offline nodes.} 
 Q: What happens if a voting node goes offline? If many go offline? 
-A: One or a few offline is fine, as quorum (the number of nodes needed to approve a transaction) is still met. 
-Typically, quorum is a majority of nodes. Split votes or many offline nodes could leave a block in an undecided state. 
-This implies that transactions that depend on the undecided block (i.e. transactions who’s input is an output of a transaction that is in an undecided block) will remain in the backlog until enough voting nodes are back online to resolve the split vote or undecided state. 
-Alternative measures could be to leave a block in an undecided state for a limited amount of time. 
-Once the time threshold is reached, the block is automatically rejected and the transactions return to the backlog. 
-Also, pending split votes may be resolved as being rejected using a more pessimistic voting strategy. 
+A: One or a few offline nodes is fine, as a quorum (the number of nodes needed to decide a block) is still online. 
+If there are many offline nodes, then a block could get stuck in an undecided state. (Transactions depending on transactions in the undecided block would also get stuck in the backlog.)
+Our solution is to wait until enough nodes come back online to vote on and decide the block. It is a reasonable solution, because all consensus algorithms require some minumum proportion of nodes to be online to work.
+An alternative solution would be to limit the amount of time that a block can be undecided before being marked \textsf{\textit{decided\_invalid}}, so that all its transactions can be copied back to the backlog for reconsideration.
 
 \medskip
 \noindent\textbf{Chaining blocks rather than transactions.} 

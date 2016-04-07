@@ -5,12 +5,11 @@
 Many BigchainDB use cases are like traditional blockchain use cases, except focused on situations where higher throughput, lower latency, or more storage capacity is necessary; where powerful querying or permissioning are helpful; or for simplicity of deployment since it feels like using a NoSQL database.
 For example, BigchainDB can handle the throughput of high-volume payment processors, and directly store contracts receipts, or other related documents on the DB alongside the actual transaction.
 Another example is “Bitcoin 2.0” applications, to keep transaction costs reasonable as the application scales\footnote{
-As of Feb 2016, it is about \$$0.10$ for a Bitcoin miner fee for a transaction to go through.
-There is no predefined fee for Bitcoin transactions; the fee is a market by itself.
-But to estimate fee, we can look at the fees that were paid in the last X blocks, and use that information to calculate a fee that will give a high probability that my transaction will go into the next block.
-Usually a higher fee will give a higher priority to my transaction, but in the end, it's the miners that decide whether they want to include the transaction in the block or not.
+As of February 2016, the fee required to ensure that a Bitcoin transaction goes through is about \$$0.10$~USD. There is no predefined fee for Bitcoin transactions; it's determined by market forces.
+To estimate the fee, we can look at the fees that were paid in the last X blocks, and use that information to calculate a fee that will give a high probability that a transaction will go into the next block.
+Usually a higher fee will give a higher priority to a transaction, but in the end, it's the miners that decide whether they want to include the transaction in the block or not.
 Usually the fees are around $15$k-$20$k satoshi per $1000$ bytes, so that would be the average fee to pay.
-Useful resources are blockchain.info \cite{blockchaininfo2015transaction_fees}, Tradeblock \cite{tradeblock} (in the charts, select fee/size) and the bitcoin wiki on transaction fees \cite{bitcoin2015fees}.
+Useful resources are blockchain.info \cite{blockchaininfo2015transaction_fees}, Tradeblock \cite{tradeblock} (in the charts, select fee/size), and the Bitcoin wiki page on transaction fees \cite{bitcoin2015fees}.
 }.
 
 Some BigchainDB use cases are also like traditional distributed DB use cases, except focused where blockchain characteristics can benefit: decentralization, immutability, and the ability to create and transfer digital assets. For example, improving DB reliability by not having a single point of failure, or storage of documents with secure time-stamping.
@@ -26,6 +25,14 @@ BigchainDB use cases include:
  \item \textbf{Data science} applications where the BigchainDB captures massive data streams, and data scientists can easily run queries against BigchainDB in their data mining and analytics tasks.
  \item \textbf{Improving database reliability} by creating resistance to single points of failure. This reliability helps move past the status quo where a single hack leads to massive data loss, like in Target, Sony, or the OPM \cite{ojeda2014target_hack}\cite{bluestone2014sony_hack}\cite{davis2015hacking}.
 \end{itemize}
+
+\subsection{Transaction Encryption}
+Normally, transactions stored in BigchainDB aren't encrypted, but users can encrypt the payload if they want, using the encryption technology of their choice. (The payload of a transaction can be any valid JSON, up to some maximum size as explained below.) Other aspects of the transaction, such as the current owner's public key and the new owner's public key, aren't encrypted and can't be encrypted.
+
+\subsection{BigchainDB Limitations}
+Because BigchainDB is built on top of an existing ``big data'' database, it inherits many of the limitations of that database.
+
+The first version of BigchainDB is built on top of RethinkDB, so it inherits some of RethinkDB's limitations, including a maximum of 32 shards per table (increasing to 64). While there's no hard limit on the document (transaction) size in RethinkDB, there is a recommended limit of 16MB for memory performance reasons. Large files can be stored elsewhere; one would store only the file location or hash (or both) in the transaction payload.
 
 \subsection{BigchainDB Products \& Services}
 We envision the following products and services surrounding BigchainDB:

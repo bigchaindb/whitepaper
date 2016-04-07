@@ -2,10 +2,10 @@
 
 \subsection{Experimental Setup}\label{subsec:benchmarks_setup}
 
-To test the writing performance, we have a process that inserts a block in the database in an infinite loop.
+To test the writing performance, we created a process that inserts a block in the database in an infinite loop.
 
 The block is a valid block with small transactions.
-In our case, we used transactions without any payload. 
+In our case, we used valid transactions without any payload. 
 An entire block occupies about $900$KB.
 
 \begin{minipage}{\linewidth}
@@ -135,7 +135,7 @@ The IO in the nodes holding the primary replica is the same has Experiment \ref{
 \noindent\textbf{Settings:}
 \begin{itemize}
  \item \textbf{Number of nodes:} $64$
- \item \textbf{Number of processes:} $2$ process per node
+ \item \textbf{Number of processes:} $2$ processes per node
  \item \textbf{Write units:} $64 \times 2 = 128$ write units
  \item \textbf{Expected output:} $2000$ writes per second
 \end{itemize}
@@ -156,7 +156,7 @@ We are able to reach the expected output, but the output performance is unstable
  \item \textbf{Number of nodes:} $64$
  \item \textbf{Number of processes:}
  \begin{itemize}
-  \item$32$ nodes running $1$ processes
+  \item$32$ nodes running $1$ process
   \item$32$ nodes running $2$ processes
  \end{itemize}
  \item \textbf{Write units:} $32 \times 2 + 32 \times 1 = 96$ write units

@@ -176,7 +176,7 @@ Attribute details are:
  \item $\mathtt{id}$: SHA3 hash of the transaction. The $\mathtt{id}$ is also the DB primary key.
  \item $\mathtt{current\_owner}$: Public key of the current owner of the digital content with hash $\mathtt{hash}$
  \item $\mathtt{new\_owner}$: Public key of the new owner of the digital content with hash $\mathtt{hash}$
- \item $\mathtt{input}$: SHA3 hash of the transaction in which the content was transferred to the user (similar to input in the blockchain). This will be extended to allow multiple inputs per transaction. 
+ \item $\mathtt{input}$: SHA3 hash of the transaction in which the content was transferred to the user (similar to input in the Bitcoin blockchain). This will be extended to allow multiple inputs per transaction. 
  \item $\mathtt{operation}$: String representation of the operation being performed (REGISTER, TRANSFER, \ldots) to define how the transactions should be validated.
  \item $\mathtt{timestamp}$: Time of creation of the transaction in UTC. It's provided by the client.
  \item $\mathtt{data}$: JSON object describing the asset (digital content). It contains at least the field \texttt{hash}, which is a SHA3 hash of the digital content. 

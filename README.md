@@ -13,3 +13,20 @@ pdflatex -interaction=nonstopmode index.tex
 ```
 
 Yes, you really have to run `pdflatex` three times.  This is a quirk of the `TeX` build system. At this point, you should have an `index.pdf`, which is the up-to-date whitepaper.
+
+#### Using the `Makefile` to generate the PDF
+There's a very simple [Makefile](src/Makefile) under the `src` directory.
+
+To generate the PDF:
+
+```bash
+$ make
+```
+
+The [Makefile](src/Makefile) has a few targets, e.g., to clean intermediate
+files:
+
+```bash
+$ make clean
+rm -f index.aux index.bbl index.blg index.log index.out
+```

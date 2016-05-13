@@ -30,3 +30,21 @@ files:
 $ make clean
 rm -f index.aux index.bbl index.blg index.log index.out
 ```
+
+#### Using `docker` to generate the PDF
+If you don't wish to bother with installing `pdflatex` and `bibtex`, and feel
+comfortable with using `docker` and `docker-compose, then
+
+```bash
+$ docker-compose up
+```
+
+will generate the PDF.
+
+For specific `make` targets, e.g.: `make clean`:
+
+```bash
+$ docker-compose run --rm docs make clean-all
+rm -f index.aux index.bbl index.blg index.log index.out
+rm -f index.pdf
+```

@@ -1,0 +1,9 @@
+version: '2'
+
+services:
+  docs:
+    build:
+      context: .
+    volumes:
+      - ./src:/usr/src/docs
+    command: make

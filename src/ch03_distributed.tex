@@ -110,12 +110,12 @@ They are deployed by a single authority with central control, rather than decent
 This creates a number of failings.
 Centralized DBs are:
 \begin{itemize}
-  \item \textbf{Susceptible to a single point of failure}, where a single node being hacked can be disastrous. This flaw is what lead to hacks at Target, Sony, the U.S. Office of Personnel Management (OPM),and many others \cite{bluestone2014sony_hack, davis2015hacking}.
-  \item \textbf{Mutable.} A hacker could change a 5-year-old record without anyone noticing (assuming no additional safeguards in place). For example, this would have prevented police from doctoring evidence in the India exam scandal \cite{sethy2015india_scam}. Such tampering is not possible in blockchains because past transactions cannot be changed or deleted, as each new block contains a “hash” digest of all previous blocks.
+  \item \textbf{Controlled by a single admin user} so that if the admin user (or account) gets compromised, then the entire database might become compromised.
+  \item \textbf{Mutable.} A hacker could change a 5-year-old record without anyone noticing (assuming no additional safeguards in place). For example, this would have prevented police from doctoring evidence in the India exam scandal \cite{sethy2015india_scam}. In blockchains, tampering with past transactons usually quite difficult. Even if someone does manage to change a past transaction, the change is easy to spot, because the hash of its block get stored in the next block; an auditor would detect a hash mismatch.
   \item \textbf{Not usable by participants with divergent interests} in situations where they do not want to cede control to a single administrator. For example, the risk of losing control of the management of information is one reason that copyright rightsholders in the music industry do not share a single DB.
   \item \textbf{Not designed to stop Sybil attacks}, where one errant node can swamp all the votes in the system.
   \item \textbf{Traditionally without support for the creation and transfer of digital assets} where only the owner of the digital asset, not the administrator of the DB, can transfer the asset.
-  \item \textbf{Not typically open to the public} to even read, let alone write. Public openness is important for public utilities. A notable exception is WikiData \cite{wikidata}.
+  \item \textbf{Not typically open to the public} to read, let alone write. Public openness is important for public utilities. A notable exception is Wikidata \cite{wikidata}.
 \end{itemize}
 
 \subsection{Fault Tolerance in the BigchainDB System}

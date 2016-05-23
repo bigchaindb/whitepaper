@@ -397,13 +397,13 @@ In the algorithm, line~$\mathtt{7}$ accepts transactions and loops through them;
   \end{lstlisting}
 \end{minipage}
 
-Listing \ref{lst:bca_tx_routines} $\mathtt{reassignOldTransactions()}$ re-assigns transactions that are too old.
+In Listing \ref{lst:bca_tx_routines}, $\mathtt{reassignOldTransactions()}$ re-assigns transactions that are too old.
 Transactions can get old if a node goes down, is running slowly, is acting maliciously, or is not performing its duties more generally.
-This routine ensures transactions assigned to a node are not dropped, by re-assigning old transactions to a different node.
-It loops through all assigned transactions (lines $\mathtt{14}$-$\mathtt{15}$), and if the transaction’s previous assignment is too old (line $\mathtt{16}$) it chooses a new node (line $\mathtt{17}$), sets a new assign time (line $\mathtt{18}$), and moves the transaction assignment from the old node (node \textbf{j}) to the new node (node \textbf{i}).
-For this routine to work, it also needs the unassigned-transactions to have an assign time, which is done in $\mathtt{assignNewTransactions()}$ (line $\mathtt{9}$)).
+This routine ensures transactions assigned to a node don't get stuck in limbo, by re-assigning old-enough transactions to different nodes.
+It loops through all assigned transactions (lines $\mathtt{18}$-$\mathtt{19}$), and if a transaction is old enough (line $\mathtt{20}$) a new node is chosen for it (line $\mathtt{21}$), a new assign time is set (line $\mathtt{22}$), and the transaction is re-assigned from the old node (node \textbf{j}) to the new node (node \textbf{i}).
+For this routine to work, it also needs the unassigned-transactions to have an assign time, which is done in $\mathtt{assignNewTransactions()}$ (line $\mathtt{11}$)).
 
-In line $\mathtt{17}$, the node assignment is not random, but instead deterministic as a function of the transaction.
+In line $\mathtt{21}$, the node assignment is not random, but instead deterministic as a function of the transaction.
 This is so nodes do not inadvertently fight over which node gets the transaction $\mathbf{t}$.
 An example deterministic function $f_{\mathtt{index}}(\mathbf{t})$ is $(\mathtt{hash}(\mathbf{t}))\ \mathtt{mod}\ N$.
 

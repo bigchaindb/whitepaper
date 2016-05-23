@@ -389,7 +389,7 @@ In the algorithm, line~$\mathtt{7}$ accepts transactions and loops through them;
     for Sj in {S1, S2, $\dots$}: 
       for each tx, t, in Sj: 
         if (time() - t.assign_time) > old_age_thr:
-          i $\sim$ findex(t) # deterministic function of t
+          i $\sim$ U({0, 1, $\dots$, k-1, k+1, $\dots$, N-1})
           t.assign_time = time()
           Si = Si $\cup$ t
           Sj = Sj - t
@@ -397,15 +397,12 @@ In the algorithm, line~$\mathtt{7}$ accepts transactions and loops through them;
   \end{lstlisting}
 \end{minipage}
 
-In Listing \ref{lst:bca_tx_routines}, $\mathtt{reassignOldTransactions()}$ re-assigns transactions that are too old.
+Listing \ref{lst:bca_tx_routines} $\mathtt{reassignOldTransactions()}$ re-assigns transactions that are too old.
 Transactions can get old if a node goes down, is running slowly, is acting maliciously, or is not performing its duties more generally.
 This routine ensures transactions assigned to a node don't get stuck in limbo, by re-assigning old-enough transactions to different nodes.
-It loops through all assigned transactions (lines $\mathtt{18}$-$\mathtt{19}$), and if a transaction is old enough (line $\mathtt{20}$) a new node is chosen for it (line $\mathtt{21}$), a new assign time is set (line $\mathtt{22}$), and the transaction is re-assigned from the old node (node \textbf{j}) to the new node (node \textbf{i}).
+It loops through all assigned transactions (lines $\mathtt{18}$-$\mathtt{19}$), and if a transaction is old enough (line $\mathtt{20}$) a new node is randomly chosen for it (line $\mathtt{21}$), a new assign time is set (line $\mathtt{22}$), and the transaction is re-assigned from the old node (node \textbf{j}) to the new node (node \textbf{i}).
 For this routine to work, it also needs the unassigned-transactions to have an assign time, which is done in $\mathtt{assignNewTransactions()}$ (line $\mathtt{11}$)).
 
-In line $\mathtt{21}$, the node assignment is not random, but instead deterministic as a function of the transaction.
-This is so nodes do not inadvertently fight over which node gets the transaction $\mathbf{t}$.
-An example deterministic function $f_{\mathtt{index}}(\mathbf{t})$ is $(\mathtt{hash}(\mathbf{t}))\ \mathtt{mod}\ N$.
 
 \subsubsection{Adding and Voting on Blocks}
 

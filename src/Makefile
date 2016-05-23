@@ -1,9 +1,15 @@
-all: clean pdf bib pdf pdf
+define genpdf
+	pdflatex -interaction=nonstopmode index.tex
+endef
+
+all: clean bib
+	$(genpdf)
+	$(genpdf)
 
 pdf:
-	pdflatex -interaction=nonstopmode index.tex
+	$(genpdf)
 
-bib:
+bib: pdf
 	bibtex index.aux
 
 clean:

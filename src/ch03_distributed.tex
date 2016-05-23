@@ -49,7 +49,7 @@ The Paxos consensus algorithm is one of many algorithms designed to solve the \e
 One of the first precise statements of the consensus problem was in a 1980 paper by Pease, Shostak and Lamport \cite{pease1980reaching,lamport_writings}. That paper allowed the faulty processes to have arbitrary faults; for example, they could lie, collude, selectively participate, or pretend to be crashed. Such arbitrary faults are also known as \emph{Byzantine faults}, after a 1982 follow-up paper on the same problem \cite{lamport1982byzantine} which called it the ``Byzantine Generals Problem.'' A consensus algorithm which enables a distributed system to come to consensus despite Byzantine faults is said to be \emph{Byzantine fault tolerant} (BFT).
 
 The 1980 paper had several nice results:
-a proof that at least $3f+1$ processes are needed,
+a proof that, given $f$ Byzantine faulty processes, at least $3f+1$ processes are needed,
 an example (inefficient) solution with $3f+1$ processes, 
 and a proof that there is \emph{no} solution with less than $3f+1$ processes.
 It also considered what's possible if message authentication is used (i.e. if a process changes a message before relaying it to another process, then the change can be detected). In that case, $2f+1$ processes suffice.

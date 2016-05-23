@@ -21,24 +21,23 @@ An ideal global blockchain, or set of blockchains, would support all of these mu
 \noindent\textbf{Latency.} Each block on the Bitcoin blockchain takes $10$ minutes to process.
 For sufficient security, it is better to wait for about an hour, giving more nodes time to confirm the transaction.
 By comparison, a transaction on the Visa network is approved in seconds at most.
-Many financial applications need latency of $30$ to $100$ ms.
+Many financial applications need latency of $30$ to $100$~ms.
 
 \medskip
-\noindent\textbf{Capacity and network bandwidth.} The Bitcoin blockchain is about $50$ GB; it grew by $24$ GB in $2015$ \cite{blockchaininfo2015blockchain_size}.
+\noindent\textbf{Capacity and network bandwidth.} The Bitcoin blockchain is about $70$~GB (at the time of writing); it grew by $24$~GB in $2015$ \cite{blockchaininfo2015blockchain_size}.
 It already takes nearly a day to download the entire blockchain.
-If throughput increased by $2,000$x to Visa levels, the additional transactions would result in database growth of $3.9$ GB/day or $1.42$ PB/year.
-At $150,000$ tps, the blockchain would grow by $214$ PB/year (yes, petabytes).
-If throughput were 1M tps, it would completely overwhelm the bandwidth of any node’s connection, which is counterproductive to the democratic goals of Bitcoin.
+If throughput increased by a factor of $2,000$, to Visa levels, the additional transactions would result in database growth of $3.9$~GB/day or $1.42$~PB/year.
+At $150,000$~tps, the blockchain would grow by $214$~PB/year (yes, petabytes).
+If throughput were 1M tps, it would completely overwhelm the bandwidth of any node’s connection.
 
 \subsection{Technology Choices Affecting Scalability}
-The Bitcoin blockchain has taken three technology choices, which hurt scaling:
+The Bitcoin blockchain has taken some technology choices which hurt scaling:
 \begin{enumerate}
- \item \textbf{Consensus Algorithm: POW.} Bitcoin’s mining rewards actually incentivizes nodes to increase computational resource usage, without any additional gains in throughput, latency, or capacity. A single confirmation from a node takes $10$ minutes on average, and six confirmations take an hour. In Bitcoin this is by design; Litecoin and other altcoins reduce the latency, but compromise security.
- \item \textbf{Replication: Full.} That is, each node stores a copy of all the data; a “full node”. This copy is typically kept on a single hard drive (or in memory). Ironically, this causes centralization: as amount of data grows, only those with the resources to hold all the data will be able to participate.
- \item \textbf{Communication Protocol: P2P Gossip.} Bitcoin uses a simple peer-to-peer gossip network to propagate transactions, meaning that bandwidth use increases as a square of the number of nodes in terms of bandwidth overhead. For example, $10$x more nodes uses $100$x more network traffic. Right now there are approximately $6,500$ nodes, so every new node has $6,500$ nodes worth of communication to deal with.
+ \item \textbf{Consensus Algorithm: POW.} Bitcoin’s mining reward actually incentivizes nodes to increase computational resource usage, without any additional improvements in throughput, latency, or capacity. A single confirmation from a node takes $10$ minutes on average, so six confirmations take about an hour. In Bitcoin this is by design; Litecoin and other altcoins reduce the latency, but compromise security.
+ \item \textbf{Replication: Full.} That is, each node stores a copy of all the data; a “full node.” This copy is typically kept on a single hard drive (or in memory). Ironically, this causes centralization: as amount of data grows, only those with the resources to hold all the data will be able to participate.
 \end{enumerate}
 
-Any one of these characteristics prevents Bitcoin blockchain from scaling up.
+These characteristics prevent the Bitcoin blockchain from scaling up.
 
 \subsection{Blockchain Scalability Efforts}
 The Bitcoin / blockchain community has spent considerable effort on improving the performance of blockchains.

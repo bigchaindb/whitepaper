@@ -26,7 +26,7 @@ Figure \ref{fig:cassandra_throughput} illustrates the throughput properties of C
 At the bottom left of the plot, we see that $50$ distributed Cassandra nodes could handle $174,000$ writes per second.
 Increasing to $300$ nodes allowed for $1.1$ million writes per second \cite{cockcroft2011benchmarking}.
 A follow-up study three years later showed a throughput of $1$ million writes per second with just a few dozen nodes \cite{kalantzis_netflix}.
-To emphasize: the throughput of this DB increased as the number of nodes increased. The scaling is linear: $10\times$ more nodes means $(10c)\times$ more throughput, where $0 < c \leq 1$.
+To emphasize: the throughput of this DB increased as the number of nodes increased. The scaling was linear.
 
 Each node also stores data.
 Critically, a node only stores a subset of all data, that is, it has partial replication.

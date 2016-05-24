@@ -37,33 +37,19 @@ It is written in C++, is open source, and has a vibrant development community \c
 In the future, we envision a variety of distributed databases being “blockchain-ified” according to the approach of this paper.
 Every relational database, document store and graph store might someday have a blockchain version.
 
-\subsection{BigchainDB Datastore Architecture}
-Figure~\ref{fig:bigchaindb_datastore_architecture} shows the architecture of the BigchainDB datastore. 
-Each node is a t2.medium instance on Amazon Web Services (AWS).
-We use RethinkDB for the storage backend (with a sharding and replication).
-
-\noindent There are three key interactions with a node:
-\begin{itemize}
- \item $\mathtt{big\_API}$ controls access to the datastore. It is through the $\mathtt{big\_API}$ where there is access for admin, applications, and any other clients. 
- \item $\mathtt{big\_trigger}$ verifies changes in the backlog, i.e. the UPDATE / DELETE calls. 
- \item $\mathtt{big\_processor}$ creates blocks of verified data from the backlog, and writes blocks to the bigchain.
-\end{itemize}
-
-\begin{figure}[!ht]
-  \centering
-  \includegraphics[width=\textwidth]{figure_9.pdf}
-  \caption{BigchainDB datastore architecture.}
-  \label{fig:bigchaindb_datastore_architecture}
-\end{figure}
 
 \subsection{BigchainDB Capacity}
-Each t2.medium provides $48$ TB of storage, so the total capacity of $N$ nodes is $N$ times $48$ TB; with $32$ nodes, the total capacity is $1536$ TB, i.e. more than a Petabyte.
-For quick reference, Figure \ref{fig:bigchain_capacity_vs_nodes} shows how total capacity depends on the number of nodes. 
+
+Each node in the RethinkDB cluster adds its own storage capacity to the total database capacity.
+
+For example, if each RethinkDB node were run on a d2.8xlarge instance on Amazon Web Services (AWS), then each of those instances could contribute its $(24 \times 2000)$~GB~$= 48000$~GB of storage to the database. 32~nodes would have $32 \times 48000 = 1536000$~GB total capacity, i.e.~more than a petabyte. (This calculation assumes no replication. A replication factor of $R$ would decrease the total capacity by a factor of $R$.)
+
+For quick reference, Figure~\ref{fig:bigchain_capacity_vs_nodes} shows how total capacity depends on the number of nodes. 
 
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=0.8\textwidth]{figure_10.pdf}
-  \caption{BigchainDB Capacity versus Number of Nodes. Each node adds another $48$ TB to the total storage capacity.}
+  \caption{BigchainDB Capacity versus Number of Nodes. Each node adds another $48000$~GB to the total storage capacity.}
   \label{fig:bigchain_capacity_vs_nodes}
 \end{figure}
 

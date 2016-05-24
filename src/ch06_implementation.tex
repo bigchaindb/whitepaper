@@ -32,16 +32,15 @@ Therefore, we built the first version of BigchainDB on top of RethinkDB.
 
 RethinkDB is a JSON (NoSQL) database with a flexible query language \cite{rethinkdb_faq}.
 It is optimized for scalable realtime feeds, which is useful for collaborative apps, streaming analytics, multiplayer games, realtime marketplaces, and connected devices / IoT\footnote{IoT = Internet of Things}.
-It is built in C++, is open source, and has a vibrant development community \cite{rethinkdb_github}.
-If one wants full ACID support or strong schema enforcement, then a SQL database is a better choice; if one prefers availability over consistency then Riak \cite{riak} is a better choice \cite{rethinkdb_faq}.
+It is written in C++, is open source, and has a vibrant development community \cite{rethinkdb_github}.
 
 In the future, we envision a variety of distributed databases being “blockchain-ified” according to the approach of this paper.
-Every relational database, document store and graph store on the planet might someday have a blockchain version.
+Every relational database, document store and graph store might someday have a blockchain version.
 
 \subsection{BigchainDB Datastore Architecture}
-Figure \ref{fig:bigchaindb_datastore_architecture} shows the architecture of the BigchainDB datastore, with three nodes as example. 
-We run each node as an AWS\footnote{AWS = Amazon Web Services} t2.medium node (or otherwise). 
-We use the RethinkDB storage backend, with a sharded cluster, and master/master-replication.
+Figure~\ref{fig:bigchaindb_datastore_architecture} shows the architecture of the BigchainDB datastore. 
+Each node is a t2.medium instance on Amazon Web Services (AWS).
+We use RethinkDB for the storage backend (with a sharding and replication).
 
 \noindent There are three key interactions with a node:
 \begin{itemize}

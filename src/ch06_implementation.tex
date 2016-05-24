@@ -53,14 +53,42 @@ For quick reference, Figure~\ref{fig:bigchain_capacity_vs_nodes} shows how total
   \label{fig:bigchain_capacity_vs_nodes}
 \end{figure}
 
+
+\subsection{Serialization}
+
+Before we can hash or sign a JSON message (e.g.~a transaction payload), we must convert it to a string in a standard way (i.e.~with the same result, regardless of the programming language or computer architecture used). That is, we must serialize the JSON message in a standard way. Fortunately, there \emph{is} a standard: RFC 7159 \cite{RFC7159}.
+
+We do JSON serialization using the \texttt{dumps()} function in \texttt{python-rapidjson}\footnote{\url{https://github.com/kenrobbins/python-rapidjson}}, a Python wrapper for \texttt{rapidjson}\footnote{\url{https://github.com/miloyip/rapidjson}} (a fast and RFC 7159-compliant JSON parser/generator written in C\nolinebreak[4]\hspace{-.05em}\raisebox{.4ex}{\tiny\bf ++}). Here's how we call it:
+
+\medskip
+\begin{minipage}{\linewidth}
+  \begin{lstlisting}[style=python]
+  import rapidjson 
+  rapidjson.dumps(data, 
+                  skipkeys=False, 
+                  ensure_ascii=False, 
+                  sort_keys=True)\end{lstlisting}
+\end{minipage}
+
+\medskip
+\noindent Here's what the parameters mean: 
+\begin{itemize}
+ \item $\mathtt{data}$ is the JSON message, stored in a Python dict
+ \item $\mathtt{skipkeys = False}$: Ensures that all keys are strings
+ \item $\mathtt{ensure\_ascii = False}$: The RFC recommends UTF-8 encoding for maximum interoperability. By setting $\mathtt{ensure\_ascii}$ to $\mathtt{False}$ we allow Unicode characters and force the encoding to UTF-8
+ \item $\mathtt{sort\_keys = True}$: The output is sorted by keys
+\end{itemize}
+
+
 \subsection{Cryptography}
 
-This section describes choices of cryptographic algorithms. 
+This section outlines the cryptographic algorithms used by BigchainDB.
 
-\subsubsection{Hashes}
+\subsubsection{Cryptographic Hashes}
 
-We hash using the SHA3-256 algorithm. We store the hex encoded hash in the BigchainDB. Here is a python implementation example, using pysha3\footnote{\url{https://bitbucket.org/tiran/pykeccak}}.
+All hashes are calculated using the SHA3-256 algorithm. We store the hex-encoded hash in BigchainDB. Here is a Python implementation example, using \texttt{pysha3}\footnote{\url{https://bitbucket.org/tiran/pykeccak}}:
 
+\medskip
 \begin{minipage}{\linewidth}
   \begin{lstlisting}[style=python]
   import hashlib 
@@ -70,86 +98,11 @@ We hash using the SHA3-256 algorithm. We store the hex encoded hash in the Bigch
   tx_hash = hashlib.sha3_256(data).hexdigest()\end{lstlisting}
 \end{minipage}
 
-\subsubsection{Keys}
-For signing and verifying signatures we are using the Elliptic Curve Digital Signature Algorithm (ECDSA) with $256$bit keys and the secp256k1 curve parameters, the same as used by Bitcoin and Ethereum.
 
-The public-key or verification key are converted to string and hex encoded before storing them to BigchainDB.
+\subsubsection{Keys and Signatures}
 
-\medskip
-\noindent Here is a python implementation example, using \mbox{python-ecdsa}\footnote{\url{https://github.com/warner/python-ecdsa}}:
+We use the Ed25519 public-key signature system \cite{ed25519} for generating public/private key pairs (also called verifying/signing keys). Ed25519 is an instance of the Edwards-curve Digital Signature Algorithm (EdDSA). As of April 2016, EdDSA was in “Internet-Draft” status with the IETF but was already widely used \cite{I-D.irtf-cfrg-eddsa, ed25519-users}.
 
-\begin{minipage}{\linewidth}
-  \begin{lstlisting}[style=python]
-  import binascii
-  from ecdsa import SigningKey 
-  # generate signing key in hex encoded form 
-  sk = SigningKey.generate() 
-  sk_hex = binascii.hexlify(sk.to_string()) 
-  # get signing key from hex 
-  sk = SigningKey.from_string(binascii.unhexlify(sk_hex))\end{lstlisting}
-\end{minipage}
+BigchainDB uses the the \texttt{ed25519} Python package\footnote{\url{https://github.com/warner/python-ed25519}}, overloaded by the cryptoconditions library\footnote{\url{https://github.com/bigchaindb/cryptoconditions}}.
 
-
-\subsection{Serialization}
-We need to clearly define how to serialize a JSON object (RFC7159) to calculate the hash. 
-The serialization should produce the same byte output independently of the architecture running the software.
-If there are differences in the serialization hash validations will fail although the transaction is correct.
-
-\medskip
-\noindent Here is an example:
-
-\begin{minipage}{\linewidth}
-  \begin{lstlisting}[style=python]
-  >>> a = r.expr({'a': 1}).to_json().run(b.connection)
-  u'{"a":1}'
-  >>> b = json.dumps({'a': 1}) 
-  '{"a": 1}' 
-  >>> a == b 
-  False\end{lstlisting}
-\end{minipage}
-
-\medskip
-\noindent We should provide the serialization and deserialization so that the following is always true.
-\medskip
-\noindent For example: 
-
-\begin{minipage}{\linewidth}
-  \begin{lstlisting}[style=python]
-  >>> deserialize(serialize(data)) == data 
-  True\end{lstlisting}
-\end{minipage}
-
-
-\subsubsection{Standard serialization for BigchainDB}
-We are currently using the python JSON module, because it complies with the RFC.
-We can specify the encoding, separators used and enforce it to order by the keys to make sure that we obtain maximum interoperability. 
-
-\begin{minipage}{\linewidth}
-  \begin{lstlisting}[style=python]
-  import json 
-  json.dumps(data, skipkeys=False, ensure_ascii=False, encoding="utf-8", separators=(',', ':'), sort_keys=True)\end{lstlisting}
-\end{minipage}
-
-\noindent The parameters mean: 
-\begin{itemize}
- \item $\mathtt{skipkeys}$: With skipkeys $\mathtt{False}$ if the provided keys are not a string the serialization will fail. This way we enforce all keys to be strings
- \item $\mathtt{ensure\_ascii}$: The RFC recommends utf-8 for maximum interoperability. By setting $\mathtt{ensure\_ascii}$ to $\mathtt{False}$ we allow unicode characters and force the encoding to $\mathtt{utf-8}$. 
- \item $\mathtt{separators}$: We need to define a standard separator to use in the serialization. If we did not do this, different implementations could use different separators for serialization, resulting in a still-valid transaction but with a different hash e.g. an extra whitespace introduced in the serialization would still create a valid JSON object but the hash would be different.
-\end{itemize}
-
-\subsubsection{Example}
-Every time we need to perform some operation on the data like calculating the hash or signing/verifying the transaction, we need to use the previous criteria to serialize the data and then use the byte representation of the serialized data (if we treat the data as bytes we eliminate possible encoding errors e.g. unicode characters):
-
-\begin{minipage}{\linewidth}
-  \begin{lstlisting}[style=python]
-  # calculate the hash of a transaction 
-  # the transaction is a dictionary 
-  tx_serialized = bytes(serialize(tx)) 
-  tx_hash = hashlib.sha3_256(tx_serialized).hexdigest() 
-  # signing a transaction 
-  tx_serialized = bytes(serialize(tx)) 
-  signature = sk.sign(tx_serialized) 
-  # verify signature 
-  tx_serialized = bytes(serialize(tx)) 
-  vk.verify(signature, tx_serialized)\end{lstlisting}
-\end{minipage}
+All keys are represented using base58 encoding by default.

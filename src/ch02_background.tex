@@ -3,9 +3,9 @@
 This section discusses how traditional blockchains perform with respect to scalability, with an emphasis on Bitcoin.
 
 \subsection{Technical Problem Description}
-Technically speaking, a traditional blockchain is a distributed database (DB) that solves the “Strong Byzantine Generals” (SBG) problem \cite{koshy2014revolution}, the name given to a combination of the Byzantine Generals problem and the Sybil Attack problem.
-In the Byzantine Generals problem \cite{lamport1982byzantine}, nodes need to agree on some value for a DB entry, under the constraint that the nodes may fail in arbitrary (malicious) ways.
-The Sybil Attack problem \cite{douceur2002sybil} arises when one or more nodes figure out how to get unfairly disproportionate influence in the process of agreeing on a value for an entry.
+One way to define a blockchain is \emph{a distributed database (DB) that solves the “Strong Byzantine Generals” (SBG) problem} \cite{koshy2014revolution}, the name given to a combination of the Byzantine Generals Problem and the Sybil Attack Problem.
+In the Byzantine Generals Problem \cite{lamport1982byzantine}, nodes need to agree on some value for a DB entry, under the constraint that the nodes may fail in arbitrary ways (including malicious behavior)\footnote{It has been noted that the Bitcoin blockchain falls short of solving the original Byzantine Generals Problem; it would be more accurate to say that it solves a relaxation of the problem \cite{garay2015bitcoin, luuscp}.}.
+The Sybil Attack Problem \cite{douceur2002sybil} arises when one or more nodes figure out how to get unfairly disproportionate influence in the process of agreeing on a value for an entry.
 It’s an “attack of the clones”—an army of seemingly independent voters actually working together to game the system.
 
 \subsection{Bitcoin Scalability Issues}

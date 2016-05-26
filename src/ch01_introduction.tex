@@ -73,11 +73,11 @@ Nodes can be added to increase throughput and capacity.
   \label{fig:bigchain_ecosystem}
 \end{figure}
 
-BigchainDB has the traditional blockchain benefits of decentralized control, immutability, and creation \& transfer of assets.
+BigchainDB has the blockchain benefits of decentralized control, immutability, and creation \& transfer of assets.
 The decentralized control is via a federation of nodes with voting permissions, that is, a super-peer P2P network \cite{ozsu2011principles}.
-The voting operates at a layer above the DB’s built in consensus.
-Immutability / tamper-resistance is via an ordered sequence of blocks where each block holds an ordered sequence of transactions; and a block’s hash is over its transactions and related data, and the previous block’s hash; that is, a block chain.
-Any entity with asset-issuance permissions can issue an asset; any entity with asset-transfer permissions and the asset’s private key may transfer the asset.
+The voting operates at a layer above the DB’s built-in consensus.
+Immutability / tamper-resistance is achieved via several mechanisms: shard replication, reversion of disallowed updates or deletes, regular database backups, and cryptographic signing of all transactions, blocks \& votes. Each vote on a block also includes the hash of a previous block (except for that block's votes).
+Any entity with asset-issuance permissions can issue an asset; an asset can only be acquired by new owners if they fulfill its cryptographic conditions.
 This means hackers or compromised system admins cannot arbitrarily change data, and there is no single-point-of-failure risk.
 
 Scalable capacity means that legally binding contracts and certificates may be stored directly on the blockchain DB.

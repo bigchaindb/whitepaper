@@ -20,18 +20,16 @@ We focused on adding the following blockchain features to the DB:
 \end{enumerate}
 
 Decentralized control is achieved via a DNS-like federation of nodes with voting permissions.
-Other nodes can connect to read, and propose transactions; this makes it a super-peer P2P network \cite{ozsu2011principles}.
-The voting operates at a layer above the DB’s built in consensus.
+Other nodes can connect to read and propose transactions; this makes it a super-peer P2P network \cite{ozsu2011principles}.
+The voting operates at a layer above the DB’s built-in consensus.
 Quorum is a majority of votes.
-For speed, all transactions are written independent of their validity; votes are done \textit{a posteriori}.
-
-Immutability is via an ordered sequence of blocks where each block holds an ordered sequence of transactions; and a block’s hash is over its transactions and related data; that is, a block chain.
-Blocks are written, then voted upon.
+For speed, each block is written before a quorum of nodes validates and votes on it.
 Chainification actually happens at voting time.
-A block doesn't have a top-level link to the previous block.
-Instead, it has a list of votes, and each vote has a “previous block” attribute pointing to the id of the block coming before it.
-
-Any entity with asset-issuance permissions can issue an asset; any entity with asset-transfer permissions and the asset’s private key may transfer the asset.
+Every block has an id equal to the hash of its transactions, timestamp, voters list and public key of its creator-node. It also has a cryptographic signature and a list of votes.
+A block doesn't include the hash (id) of the previous block when it first gets written.
+Instead, votes get appended to the block over time, and each vote has a ``previous block'' attribute equal to the hash (id) of the block coming before it.
+Immutability / tamper-resistance is achieved via several mechanisms: shard replication, reversion of disallowed updates or deletes, regular database backups, and cryptographic signing of all transactions, blocks \& votes.
+Any entity with asset-issuance permissions can issue an asset; an asset can only be acquired by new owners if they fulfill its cryptographic conditions.
 This means hackers or compromised system admins cannot arbitrarily change data, and there is no single-point-of-failure risk.
 
 \subsection{Architecture}

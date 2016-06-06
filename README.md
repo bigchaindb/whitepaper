@@ -33,7 +33,7 @@ rm -f index.aux index.bbl index.blg index.log index.out
 
 #### Using `docker` to generate the PDF
 If you don't wish to bother with installing `pdflatex` and `bibtex`, and feel
-comfortable with using `docker` and `docker-compose, then
+comfortable with using `docker` and `docker-compose`, then
 
 ```bash
 $ docker-compose up

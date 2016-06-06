@@ -2,7 +2,7 @@
 
 \subsection{Principles}
 Rather than trying to scale up blockchain technology, BigchainDB starts with a “big data” distributed database, and adds blockchain characteristics.
-It avoids the technology choices that plague Bitcoin, such as full replication and broadcast communication.
+It avoids the technology choices that plague Bitcoin, such as full replication.
 
 We built BigchainDB on top of an enterprise-grade distributed DB, from which BigchainDB inherits high throughput, high capacity, a full-featured NoSQL query language, efficient querying, and permissioning. Nodes can be added to increase throughput and capacity.
 
@@ -34,7 +34,7 @@ This means hackers or compromised system admins cannot arbitrarily change data, 
 
 \subsection{Architecture}
 Figure \ref{fig:bigchaindb_architecture} illustrates the architecture of the BigchainDB system.
-The BigchainDB system presents its API to clients as if it was a single blockchain database.
+The BigchainDB system presents its API to clients as if it is a single blockchain database.
 Under the hood, there are actually two distributed databases\footnote{This can be implemented as two databases, or as two tables in the same database. While there is no practical difference, for the sake of clarity we describe it as two separate databases.}, $\mathbf{S}$ (transaction set or “backlog”) and $\mathbf{C}$ (block chain), connected by the BigchainDB Consensus Algorithm (BCA).
 The BCA runs on each signing node.
 Non-signing clients may connect to BigchainDB; depending on permissions they may be able to read, issue assets, transfer assets, and more; section~\ref{sec:permissioning} explores this more.

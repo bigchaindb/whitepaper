@@ -591,13 +591,13 @@ A node gets to vote on a transaction based on whether it has been given a voting
 Contrast this to a POW model, where the probability of a node voting is proportional to its hash power, which assuming all miners have state-of-the-art hardware is equivalent to electricity spent; or to POS where probability of a node voting is proportional to how much money it has.
 
 Traditionally, blockchains have held two types of assets. 
-“Native assets,” like Bitcoins or Ether, are built into the core protocol. 
+“Native assets,” like Bitcoins or Litecoins, are built into the core protocol. 
 The consensus uses these assets to measure transaction validity and to reward voting by native-asset transaction fees and mining rewards. 
-Second are non-native “overlay assets” in overlay protocols sitting above the core protocol (e.g.~SPOOL \cite{dejonghe_spool}).
+Second are non-native “overlay assets” in overlay protocols sitting above the core protocol (e.g.~SPOOL~\cite{dejonghe_spool}).
 However, this traditional approach to native assets and reward has weaknesses:
 
 \begin{itemize}
- \item \textbf{Overlay Asset Double-Spend.} Traditional blockchains’ consensus models do not account for overlay assets. There is nothing at the core protocol level to prevent a double-spend of an overlay asset.
+ \item \textbf{Overlay Asset Double-Spend.} Traditional blockchains’ consensus models do not account for overlay assets. There is nothing at the core protocol level to prevent a double-spend of an overlay asset\footnote{Ethereum is unlike traditional blockchains in this regard. According to Christian Lundkvist, ``If a non-native asset has well-reviewed and tested rules (such as the Standard Token Contract) then the core protocol makes sure that the contract is executing correctly, which does enforce things like protection against double spending of tokens/non-native assets. Furthermore, in upcoming hard forks Ether will be implemented as a token on par with other tokens, i.e.~using smart contract logic.''}.
  \item \textbf{Native Asset Friction to Network Participation.} Traditional blockchain voting nodes need to get paid in the native asset, so any new participants in the network must acquire the native asset, typically on an exchange, before being able to conduct a transaction. Acquiring the native asset is especially difficult on newer blockchains with native assets that are not yet available on many exchanges. This is a high barrier to entry when compared to traditional web services, where any new participant can conduct a transaction by paying in a standard currency like U.S. dollars with a standard payment method like a credit card.
 \end{itemize}
 

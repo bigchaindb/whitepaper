@@ -1,0 +1,26 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{lipsum}% for pagenumbering
+\usepackage{hyperref}
+
+\title{Addendum to the BigchainDB Whitepaper}
+\author{ascribe GmbH, Berlin, Germany}
+
+\begin{document}
+
+\pagenumbering{gobble}% Remove page numbers (and reset to 1)
+
+\maketitle
+
+This addendum summarizes significant changes since the BigchainDB white\-paper was last updated. The online \href{https://bigchaindb.readthedocs.io/}{BigchainDB Documentation} is kept up-to-date.
+
+\begin{itemize}
+  \item It's possible that not every node will vote on every block. Only a quorum of votes is required. See \href{https://github.com/bigchaindb/bigchaindb/issues/190}{Issue \#190 on GitHub}.
+  \item There are more details about how BigchainDB achieves decentralization and immutability / tamper-resistance in the \href{https://bigchaindb.readthedocs.io/en/latest/topic-guides/index.html}{BigchainDB Documentation}.
+  \item Transactions are not validated before being written to the backlog table ($\mathbf{S}$ in the whitepaper). There's some discussion of this in \href{https://github.com/bigchaindb/bigchaindb/issues/109}{Issue \#109 on GitHub}.
+  \item The data structures of transactions, blocks and votes have changed and will probably change some more. Their current schemas can be found in the \href{https://bigchaindb.readthedocs.io/en/latest/topic-guides/models.html}{BigchainDB Documentation}. \href{https://github.com/bigchaindb/bigchaindb/issues/342}{Issue \#342} lists other suggested changes.
+  \item Blocks and votes are now stored in separate, append-only tables. (Votes used to be appended to lists inside blocks.) Votes are still used to form the links in the blockchain. See the discussion on \href{https://github.com/bigchaindb/bigchaindb/issues/368}{Issue \#368} and related issues on GitHub.
+  \item We are planning to use a next-generation firewall, or something similar, around each node, so that each node can drop certain incoming requests, such as drop table, drop database, or update/delete block/vote.
+\end{itemize}
+
+\end{document}

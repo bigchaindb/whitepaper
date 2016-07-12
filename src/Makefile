@@ -8,8 +8,8 @@ all: clean bib
 	$(genpdf)
 	@echo Now we will merge the Addendum with the whitepaper using pdftk.
 	@echo If you don\'t have pdftk installed, then you will have to install it, using e.g.
-	@echo sudo apt-get install pdftk
-	pdftk addendum.pdf index.pdf cat output whitepaper.pdf
+	@echo $ sudo apt-get install pdftk
+	pdftk index.pdf addendum.pdf cat output whitepaper.pdf
 
 pdf:
 	$(genpdf)

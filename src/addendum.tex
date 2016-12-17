@@ -4,7 +4,7 @@
 \usepackage{hyperref}
 
 \title{Addendum to the BigchainDB Whitepaper}
-\author{ascribe GmbH, Berlin, Germany}
+\author{BigchainDB GmbH, Berlin, Germany}
 
 \begin{document}
 
@@ -12,16 +12,25 @@
 
 \maketitle
 
-This addendum summarizes significant changes since the BigchainDB white\-paper was last updated. The online \href{https://bigchaindb.readthedocs.io/}{BigchainDB Documentation} is kept up-to-date.
+This addendum summarizes significant changes since the BigchainDB white\-paper was last updated. The online \href{https://docs.bigchaindb.com/}{BigchainDB Documentation} is kept up-to-date.
 
 \begin{itemize}
-  \item There are more details about how BigchainDB achieves \href{https://bigchaindb.readthedocs.io/en/latest/topic-guides/decentralized.html}{decentralization} and \href{https://bigchaindb.readthedocs.io/en/latest/topic-guides/immutable.html}{immutability / tamper-resistance} in the BigchainDB Documentation.
-  \item \textbf{Section 4, Section 6 and Figure 11.} It's possible that not every node will vote on every block. Only a quorum of votes is required. See \href{https://github.com/bigchaindb/bigchaindb/issues/190}{Issue \#190 on GitHub}.
-  \item \textbf{Section 4.3, Section 6 and Figure 10.} Transactions are not validated before being written to the backlog table ($\mathbf{S}$ in the whitepaper). There's some discussion of this in \href{https://github.com/bigchaindb/bigchaindb/issues/109}{Issue \#109 on GitHub}.
-  \item \textbf{Section 4.5.} The data structures of transactions, blocks and votes have changed and will probably change some more. Their current schemas can be found in the \href{https://bigchaindb.readthedocs.io/en/latest/topic-guides/models.html}{BigchainDB Documentation}. \href{https://github.com/bigchaindb/bigchaindb/issues/342}{Issue \#342} lists other suggested changes.
-  \item \textbf{Sections 4 and 6.} Blocks and votes are now stored in separate, append-only tables. (Votes used to be appended to lists inside blocks.) Votes are still used to form the links in the blockchain. See the discussion on \href{https://github.com/bigchaindb/bigchaindb/issues/368}{Issue \#368} and related issues on GitHub.
-  \item \textbf{Section 5.2.} A BigchainDB node can have arbitrarily-large storage capacity (e.g. on a RAID array). Other factors limit the maximum storage capacity of a cluster (e.g. \href{https://bigchaindb.readthedocs.io/en/latest/nodes/node-requirements.html#memory-ram-requirements}{available RAM} and the \href{https://rethinkdb.com/limitations/}{maximum shard count of each table}).
-  \item \textbf{Section 5.} We are planning to use a next-generation firewall, or something similar, around each node, so that each node can drop certain incoming requests, such as drop table, drop database, or update/delete block/vote.
+  \item There are more details about how BigchainDB achieves \href{https://docs.bigchaindb.com/en/latest/decentralized.html}{decentralization} and \href{https://docs.bigchaindb.com/en/latest/immutable.html}{immutability / tamper-resistance} in the BigchainDB Documentation.
+
+  \item \textbf{Sections 4 and 6.} The whitepaper described $\mathbf{S}$ and $\mathbf{C}$ as being two separate databases, but the actual implementation has them as three separate tables (in one database). $\mathbf{S}$ became the backlog table (of transactions). $\mathbf{C}$ became two append-only tables, one for blocks and one for votes. To understand why, see the discussion on \href{https://github.com/bigchaindb/bigchaindb/issues/368}{Issue \#368} and related issues on GitHub.
+
+  \item \textbf{Section 4.3, Section 6 and Figure 10.} Transactions are \emph{not} validated before being written to the backlog table ($\mathbf{S}$ in the whitepaper).
+
+  \item \textbf{Section 4.5.} The data structures of transactions, blocks and votes have changed and will probably change some more. Their current schemas can be found in the \href{https://docs.bigchaindb.com/projects/server/en/latest/index.html}{BigchainDB Documentation}. Each node makes one vote for each block. Each vote contains the id (hash) of the block being voted on, and the id (hash) of the previous block \emph{as determined by the voting node}. Another node might consider a different block to be the previous block. In principle, each node records a different order of blocks (in its votes). This is okay because the check to see if a transaction is a double-spending attempt doesn't depend on an agreed-upon block ordering.
+
+  \item (This isn't a change; it's more of an interesting realization.) If you pick a random block, its hash is stored in some votes, but the information in those votes never gets included in anything else (blocks or votes). Therefore there is no hash chain or Merkle chain of blocks. Interestingly, every CREATE transaction begins a Merkle directed acyclic graph (DAG) of transactions, because all TRANSFER transactions contain the hashes of previous transactions.
+
+  \item \textbf{Section 5.1} By January 2017, one will be able to choose RethinkDB or MongoDB as the backend database. Both will be supported. In the future, even more databases may be supported. MongoDB was chosen as the second one to support because it's very similar to RethinkDB: it's document-oriented, has strong consistency guarantees, and has the same open source license (AGPL~v3). Also, it's possible to get something like RethinkDB's changefeed with MongoDB.
+
+  \item \textbf{Section 5.2.} A BigchainDB node can have arbitrarily-large storage capacity (e.g.~in a RAID array). Other factors limit the maximum storage capacity of a cluster (e.g.~\href{https://bigchaindb.readthedocs.io/en/latest/nodes/node-requirements.html#memory-ram-requirements}{available RAM in the case of RethinkDB}).
+
+  \item \textbf{Section 5.4} There have been some changes in the details of how cryptographic hashes and signatures are calculated. For the latest details, see the documentation page about \href{https://docs.bigchaindb.com/projects/server/en/master/appendices/cryptography.html}{Cryptographic calculations}.
+
 \end{itemize}
 
 \end{document}

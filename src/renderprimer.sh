@@ -7,7 +7,7 @@ rm -f primer.pdf
 
 pdflatex -interaction=nonstopmode primer.tex
 
-bibtex index
+bibtex primer
 
 pdflatex -interaction=nonstopmode primer.tex
 pdflatex -interaction=nonstopmode primer.tex

@@ -23,13 +23,20 @@
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
 \definecolor{codeblue}{rgb}{0,0,0.6}
 \definecolor{backcolour}{rgb}{0.95,0.95,0.95}
- 
+
+% The default tt font is Computer Modern Typewriter (cmtt)
+% Other options can be found here: https://goo.gl/pwpTMU
+% Trent wanted a sans serif font.
+\usepackage[defaultmono]{droidmono}  % Droid Sans Mono
+% Note that this will affect tt rendering everywhere
+% not just in code listings.
+
 \lstdefinestyle{python}{
     backgroundcolor=\color{backcolour},   
     commentstyle=\color{codegreen},
     keywordstyle=\color{codeblue},
     numberstyle=\tiny\color{codegray},
-    stringstyle=\color{codepurple},
+    stringstyle=\color{codegray},
     basicstyle=\footnotesize\ttfamily,
     breakatwhitespace=false,         
     breaklines=true,                 
@@ -261,7 +268,7 @@ in a MongoDB database.
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=\textwidth]{MDB_BDB_ellipses.pdf}
-  \caption{BigchainDB has a client-server architecture.}
+  \caption{BigchainDB has a two-layer consensus. The lower level (MongoDB) handles transaction ordering and crash faults. The higher level (BigchainDB) federation handles double spends and malicious attacks.}
   \label{fig:system_diagram}
 \end{figure}
 
@@ -433,7 +440,8 @@ in the Python driver docs~\cite{bigchaindb_python_driver}.
 As noted earlier, a production BigchainDB cluster should be operated
 by several different people or organizations.
 For example, within a single enterprise,
-each node could be operated by a different business unit.
+each node could be operated by a different business unit;
+or within a consortium, each participating organization could run a node.
 Each operator must install and run a ``BigchainDB node''
 containing an instance of BigchainDB Server,
 an instance of MongoDB (server),

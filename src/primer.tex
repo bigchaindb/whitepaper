@@ -106,7 +106,10 @@ BigchainDB is a scalable blockchain database:
 a big-data database with blockchain characteristics
 including decentralization, immutability and
 built-in support for creation \&~transfer of assets.
-This primer explains why something like BigchainDB was needed,
+This primer\footnote{The
+BigchainDB Whitepaper~\cite{bigchaindb_whitepaper}
+goes into much more detail.}
+explains why something like BigchainDB was needed,
 summarizes how it adds blockchain characteristics,
 explores how it fits into the rest of the decentralization ecosystem,
 and concludes with a section about how you can try it.
@@ -117,12 +120,15 @@ and concludes with a section about how you can try it.
 One goal of the early Internet (ARPAnet) was to create a communications network
 that could withstand nuclear war~\cite{arpanet_and_nuclear_war}.
 To meet that goal, the designers removed the need for a central owner or
-controller, a single point of failure. The Internet is decentralized.
+controller, a single point of failure.
+The core Internet protocols are decentralized.
 Many other Internet-based protocols are similarly decentralized,
 at least in part, e.g.~email, DNS, and BitTorrent.
+However, over time, many centralized services and APIs have become
+prevalent on the Internet (e.g.~Facebook and Google search).
 Bitcoin~\cite{nakamoto2009bitcoin}, introduced in 2009,
-is also a decentralized protocol,
-but it sparked a new wave of interest in such protocols.
+is a decentralized protocol
+which sparked a new wave of interest in such protocols.
 The reason was that it demonstrated a working decentralized cryptocurrency
 requiring no central bank or other trusted third party.
 Trust emerges from the protocol and its one lasting artifact:
@@ -199,7 +205,7 @@ determined mostly by the speed of light).
 Moreover, all modern databases have support
 for rich querying and permissions.
 
-We never mentioned cost above, but that's also important!
+Storage cost is a major limitation of using Bitcoin.
 As of early 2017,
 if you wanted a short Bitcoin transaction confirmation time,
 you had to pay around 25~US~cents
@@ -257,8 +263,8 @@ Currently, one can use MongoDB or RethinkDB as the database backend,
 but we recommend MongoDB:
 a trusted, enterprise-grade database with
 high perfomance, strong consistency and modern tooling~\cite{mongodb}.
-Figure~\ref{fig:system_diagram} illustrates the architecture
-of a BigchainDB cluster.
+Figures~\ref{fig:system_diagram} and~\ref{fig:federation_node_db} illustrate the architecture
+of a BigchainDB federation/cluster.
 An external client can communicate with any instance of BigchainDB Server
 in the cluster.
 Each BigchainDB Server instance is associated with one node
@@ -270,6 +276,14 @@ in a MongoDB database.
   \includegraphics[width=\textwidth]{MDB_BDB_ellipses.pdf}
   \caption{BigchainDB has a two-layer consensus. The lower level (MongoDB) handles transaction ordering and crash faults. The higher level (BigchainDB) federation handles double spends and malicious attacks.}
   \label{fig:system_diagram}
+\end{figure}
+
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{fed-node-db-diagram.pdf}
+  \caption{A BigchainDB federation/cluster contains several independent BigchainDB nodes. Each BigchainDB node contains one node of a MongoDB (or RethinkDB) database.}
+  \label{fig:federation_node_db}
 \end{figure}
 
 
@@ -368,7 +382,7 @@ Figure~\ref{fig:bigchain_ecosystem} illustrates how BigchainDB can be used in a 
   \centering
   \includegraphics[width=\textwidth]{figure_1.pdf}
   \caption{From a base context of a centralized cloud computing ecosystem (left), BigchainDB can be added as another database to gain some decentralization benefits (middle).
-  It also fits into a full-blown decentralization ecosystem (right).}
+  It also fits into a fully-decentralized system (right).}
   \label{fig:bigchain_ecosystem}
 \end{figure}
 
@@ -390,9 +404,7 @@ which is managed by the IPDB Foundation\cite{ipdb_foundation_website}).
 Once you have a BigchainDB cluster to connect to,
 you can communicate with it via the BigchainDB HTTP API~\cite{bigchaindb_http_api}.
 BigchainDB also has a WebSocket Event Stream API~\cite{bigchaindb_websocket_api}.
-Crafting a valid BigchainDB transaction
-(to send to the cluster) is somewhat tricky.
-Fortunately, there are many tools and libraries to help:
+There are many tools and libraries to help craft a valid BigchainDB transaction:
 a CLI, a Python driver, a JavaScript transaction builder, a Java driver, a Go driver, etc.
 Links to those are given in the Drivers \& Clients page of the docs~\cite{bigchaindb_drivers_clients}.
 Listing~\ref{py1} shows some example example Python code
@@ -405,11 +417,11 @@ using the BigchainDB Python driver~\cite{bigchaindb_python_driver}.
   from bigchaindb_driver.crypto import generate_keypair
   bdb = BigchainDB('http://example-bdb-cluster.net:9984')
   alice = generate_keypair()
-  golf_club = {
+  edition_info = {
       'data': {
-          'name': 'Avocado Greens Golf Club',
-          'location': 'Pitts Mills',
-          'num_holes': 9
+          'piece_name': 'Avocado Green',
+          'artist_name': 'Parker Millson',
+          'edition_number': 9
       }
   }
   prepared_creation_tx = bdb.transactions.prepare(
@@ -425,9 +437,9 @@ using the BigchainDB Python driver~\cite{bigchaindb_python_driver}.
 \medskip
 
 Line~4 generates a public/private keypair for a user named \texttt{alice}.
-Lines~5--11 create a Python dict named \texttt{golf\_club}.
+Lines~5--11 create a Python dict named \texttt{edition\_info}.
 Lines~12--15 create a raw (unsigned) BigchainDB CREATE transaction,
-to create an asset based on the \texttt{golf\_club} dict, for \texttt{alice}.
+to create an asset based on the \texttt{edition\_info} dict, for \texttt{alice}.
 Lines~16--18 sign that transaction using the private key (signing key)
 of \texttt{alice}. Line~19 sends that to the BigchainDB cluster.
 

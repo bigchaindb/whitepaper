@@ -5,5 +5,5 @@ services:
     build:
       context: .
     volumes:
-      - ./src:/usr/src/docs
-    command: make
+      - ./:/usr/src/docs
+    command: bin/build.sh

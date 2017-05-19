@@ -64,7 +64,7 @@ export PATH=$PATH:/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbi
 
 ## Generate the PDF
 
-To generate the PDF (bigchaindb-whitepaper.pdf):
+To generate the PDF in `dist/bigchaindb-whitepaper.pdf`:
 
 ```bash
 make

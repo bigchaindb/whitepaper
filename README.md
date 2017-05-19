@@ -1,13 +1,22 @@
 # BigchainDB Whitepaper
 
+![repo banner](media/repo-banner@2x.png)
+
 This repository contains the source (LaTeX) for the BigchainDB whitepaper.
+
+---
+
+**The most recent PDF version of the whitepaper can always be retrieved from [bigchaindb.com/whitepaper](https://www.bigchaindb.com/whitepaper)**
+
+---
 
 If you're looking for the main BigchainDB repository, it's at [bigchaindb/bigchaindb](https://github.com/bigchaindb/bigchaindb).
 
+And if you're really here to get a glimpse of the exciting world of LaTeX-based file generation, this repo is for you. 
 
 ## Prerequisites for generating the PDF
 
-Generation uses two binaries:
+Build uses two binaries:
 
 - `bibtex`
 - `pdflatex`

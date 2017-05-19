@@ -23,6 +23,16 @@ Build uses two binaries:
 
 ## Installation instructions
 
+## Using Docker
+
+If you don't wish to bother with installing `pdflatex` and `bibtex`, and feel comfortable with using `docker` and `docker-compose`, then:
+
+```bash
+docker-compose up
+```
+
+This will generate the final PDF too.
+
 ### Linux
 
 ```bash
@@ -43,7 +53,7 @@ After that you have a whole bunch of binaries in a rather weird location. You ca
 # create symlink for pdflatex binary in .app package
 ln -s /Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin/pdflatex /usr/local/bin/pdflatex
 # create symlink for bibtext binary in .app package
-ln -s /Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin/bibtext /usr/local/bin/bibtext
+ln -s /Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin/bibtex /usr/local/bin/bibtex
 ```
 
 Or get all the Tex tools by adding the whole folder to your `PATH` first:
@@ -54,31 +64,8 @@ export PATH=$PATH:/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbi
 
 ## Generate the PDF
 
-There's a very simple [Makefile](Makefile). To generate the PDF (bigchaindb-whitepaper.pdf):
+To generate the PDF (bigchaindb-whitepaper.pdf):
 
 ```bash
-make all
-```
-
-## Using the bash scripts
-
-```bash
-cd bin
-./renderpaper.sh
-```
-
-## Using Docker to Generate the PDF
-
-If you don't wish to bother with installing `pdflatex` and `bibtex`, and feel comfortable with using `docker` and `docker-compose`, then
-
-```text
-$ docker-compose up
-```
-
-will generate the PDF.
-
-For specific `make` targets, such as `make clean`, do:
-
-```text
-$ docker-compose run --rm docs make clean
+make
 ```

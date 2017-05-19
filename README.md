@@ -5,32 +5,57 @@ This repository contains the source (LaTeX) for the BigchainDB whitepaper.
 If you're looking for the main BigchainDB repository, it's at [bigchaindb/bigchaindb](https://github.com/bigchaindb/bigchaindb).
 
 
-## Prerequisites for Using Bash Script or Make
+## Prerequisites for generating the PDF
 
-1. [TeX Live](https://www.tug.org/texlive/) or similar
-2. pdftk (can be installed using `apt-get install pdftk`)
+Generation uses two binaries:
 
+- `bibtex`
+- `pdflatex`
 
-## Using the Bash Script to Generate the PDF
+## Installation instructions
 
-```text
-$ cd src
-$ ./renderpaper.sh
+### Linux
+
+```bash
+sudo apt-get install -y texlive texlive-latex-extra pdftk
 ```
 
-## Using Make to Generate the PDF
+### macOS
 
-There's a very simple [Makefile](src/Makefile) under the `src` directory. To generate the PDF (whitepaper.pdf):
+On macOS you can get both binaries as part of the BasicTex package which you can install via Homebrew cask:
 
-```text
-$ cd src
-$ make all
+```bash
+brew cask install basictex
 ```
 
-The [Makefile](src/Makefile) has a few targets. To clean intermediate files:
+After that you have a whole bunch of binaries in a rather weird location. You can either symlink the required binaries to one of your `PATH`s, e.g. `/usr/local/bin`:
 
-```text
-$ make clean
+```bash
+# create symlink for pdflatex binary in .app package
+ln -s /Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin/pdflatex /usr/local/bin/pdflatex
+# create symlink for bibtext binary in .app package
+ln -s /Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin/bibtext /usr/local/bin/bibtext
+```
+
+Or get all the Tex tools by adding the whole folder to your `PATH` first:
+
+```bash
+export PATH=$PATH:/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin
+```
+
+## Generate the PDF
+
+There's a very simple [Makefile](Makefile). To generate the PDF (bigchaindb-whitepaper.pdf):
+
+```bash
+make all
+```
+
+## Using the bash scripts
+
+```bash
+cd bin
+./renderpaper.sh
 ```
 
 ## Using Docker to Generate the PDF

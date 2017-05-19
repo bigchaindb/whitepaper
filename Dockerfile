@@ -1,7 +1,6 @@
 FROM ubuntu
 
-RUN apt-get update && apt-get install -y texlive texlive-latex-extra 
-RUN apt-get install -y make
+RUN apt-get update && apt-get install -y texlive texlive-latex-extra pdftk make
 
 RUN mkdir -p /usr/src/docs
 

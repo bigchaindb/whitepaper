@@ -41,7 +41,7 @@ Non-signing clients may connect to BigchainDB; depending on permissions they may
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=0.7\textwidth]{img/figure_3.pdf}
+  \includegraphics[width=0.7\textwidth]{figure_3.pdf}
   \caption{Architecture of BigchainDB system.
   There are two big data distributed databases: a Transaction Set $\mathbf{S}$ (left) to take in and assign incoming transactions, and a Blockchain $\mathbf{C}$ (right) holding ordered transactions that are “etched into stone”.
   The signing nodes running the BigchainDB Consensus Algorithm update $\mathbf{S}$, $\mathbf{C}$, and the transactions (txs) between them.}
@@ -75,7 +75,7 @@ Each server node has its own view of the transaction backlog $\mathbf{S}$, and t
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=\textwidth]{img/figure_4.pdf}
+  \includegraphics[width=\textwidth]{figure_4.pdf}
   \caption{\textit{Left:} The backlog $\mathbf{S}$ starts empty and the chain $\mathbf{C}$ starts with only a genesis block.
   \textit{Right:} Clients have inserted transactions into backlog $\mathbf{S}$ and assigned to nodes 1, 3, and 2.}
   \label{fig:bigchaindb_architecture_step1}
@@ -97,7 +97,7 @@ Node~2 is assigned transactions~\textsf{$\#$D} and \textsf{$\#$C}. Nothing has b
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=\textwidth]{img/figure_5.pdf}
+  \includegraphics[width=\textwidth]{figure_5.pdf}
   \caption{\textit{Left:} Node 1 has moved its assigned transactions from backlog $\mathbf{S}$ to chain $\mathbf{C}$.
   \textit{Right:} Node 3 has processed its assigned transactions too.}
   \label{fig:bigchaindb_architecture_step2}
@@ -120,7 +120,7 @@ In Figure \ref{fig:bigchaindb_architecture_step2} right, we depict the distincti
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=0.5\textwidth]{img/figure_6.pdf}
+  \includegraphics[width=0.5\textwidth]{figure_6.pdf}
   \caption{Transactions from an invalid block (on right, shaded) get re-inserted into backlog $\mathbf{S}$ for re-consideration.}
   \label{fig:bigchaindb_architecture_step3}
 \end{figure}
@@ -134,7 +134,7 @@ Similarly, voting doesn’t stop after a block becomes decided, because it’s f
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=\textwidth]{img/figure_7.pdf}
+  \includegraphics[width=\textwidth]{figure_7.pdf}
   \caption{\textit{Left:} More than one client may talk to a given node.
   \textit{Right:} there are multiple nodes. Typically, a client connects to just one node (an arbitrarily picked one).}
   \label{fig:bigchaindb_architecture_sharding}
@@ -240,7 +240,7 @@ Each node must generate a vote for each block, to be appended to that block's $\
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=\textwidth]{img/figure_8.pdf}
+  \includegraphics[width=\textwidth]{figure_8.pdf}
   \caption{Pipelining in the BigchainDB blockchain $\mathbf{C}$.
   Votes accumulate on each block.
   Blocks can continue to accumulate on the blockchain, even though their parents, grandparents, etc. may be undecided.

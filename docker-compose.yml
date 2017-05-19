@@ -1,9 +1,9 @@
 version: '2'
 
 services:
-  docs:
+  pdf:
     build:
       context: .
     volumes:
-      - ./:/usr/src/docs
-    command: bin/build.sh
+      - .:/usr/src/whitepaper
+    command: ./bin/build.sh

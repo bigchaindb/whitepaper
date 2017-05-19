@@ -16,14 +16,12 @@ And if you're really here to get a glimpse of the exciting world of LaTeX-based 
 
 ## Prerequisites for generating the PDF
 
-Build uses two binaries:
+Build requires two binaries:
 
-- `bibtex`
 - `pdflatex`
+- `bibtex`
 
-## Installation instructions
-
-## Using Docker
+### Using Docker
 
 If you don't wish to bother with installing `pdflatex` and `bibtex`, and feel comfortable with using `docker` and `docker-compose`, then:
 
@@ -31,7 +29,7 @@ If you don't wish to bother with installing `pdflatex` and `bibtex`, and feel co
 docker-compose up
 ```
 
-This will generate the final PDF too.
+This will generate the final PDF and output to `./bigchaindb-whitepaper.pdf`.
 
 ### Linux
 
@@ -41,18 +39,18 @@ sudo apt-get install -y texlive texlive-latex-extra pdftk
 
 ### macOS
 
-On macOS you can get both binaries as part of the BasicTex package which you can install via Homebrew cask:
+On macOS you can get both binaries as part of the BasicTex package, easily install via Homebrew cask:
 
 ```bash
 brew cask install basictex
 ```
 
-After that you have a whole bunch of binaries in a rather weird location. You can either symlink the required binaries to one of your `PATH`s, e.g. `/usr/local/bin`:
+Now you have a whole bunch of binaries in a rather weird location. You can either symlink the required binaries to one of your `PATH`s, e.g. `/usr/local/bin`:
 
 ```bash
 # create symlink for pdflatex binary in .app package
 ln -s /Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin/pdflatex /usr/local/bin/pdflatex
-# create symlink for bibtext binary in .app package
+# create symlink for bibtex binary in .app package
 ln -s /Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin/bibtex /usr/local/bin/bibtex
 ```
 
@@ -64,8 +62,8 @@ export PATH=$PATH:/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbi
 
 ## Generate the PDF
 
-To generate the PDF in `dist/bigchaindb-whitepaper.pdf`:
+Finally, to generate the PDF in `./bigchaindb-whitepaper.pdf`:
 
 ```bash
-make
+./build.sh
 ```

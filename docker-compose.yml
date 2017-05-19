@@ -6,4 +6,4 @@ services:
       context: .
     volumes:
       - .:/usr/src/whitepaper
-    command: ./bin/build.sh
+    command: ./build.sh

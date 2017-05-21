@@ -23,7 +23,7 @@ Build requires two binaries:
 
 ### Using Docker
 
-If you don't wish to bother with installing `pdflatex` and `bibtex`, and feel comfortable with using `docker` and `docker-compose`, then:
+This is the preferred way so you don't have to bother with installing `pdflatex` and `bibtex`, which is especially cumbersome on macOS & Windows:
 
 ```bash
 docker-compose up
@@ -39,7 +39,7 @@ sudo apt-get install -y texlive texlive-latex-extra pdftk
 
 ### macOS
 
-On macOS you can get both binaries as part of the BasicTex package, easily install via Homebrew cask:
+On macOS you can get both binaries as part of the BasicTex package, which can be installed manually via [their package installer](http://www.tug.org/mactex/morepackages.html) or via Homebrew cask:
 
 ```bash
 brew cask install basictex

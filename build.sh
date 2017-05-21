@@ -18,7 +18,12 @@ function pdfs {
 }
 
 function pdfs_combine {
-    pdftk index.pdf addendum.pdf cat output $FILENAME
+	if [[ "$OSTYPE" == "darwin"* ]]; then
+		# use Apple's builtin tool
+		"/System/Library/Automator/Combine PDF Pages.action/Contents/Resources/join.py" -o $FILENAME index.pdf addendum.pdf
+	else
+		pdftk index.pdf addendum.pdf cat output $FILENAME
+	fi
 }
 
 # create or empty the build tmp folder

@@ -12,29 +12,33 @@ This repository contains the source (LaTeX) for the BigchainDB whitepaper.
 
 If you're looking for the main BigchainDB repository, it's at [bigchaindb/bigchaindb](https://github.com/bigchaindb/bigchaindb).
 
-And if you're really here to get a glimpse of the exciting world of LaTeX-based file generation, this repo is for you. 
+And if you're really here to get a glimpse of the exciting world of LaTeX-based file generation, this repo is for you.
 
-## Prerequisites for generating the PDF
+## Using Docker
+
+Using Docker in conjunction with Docker Compose is the recommended way so you don't have to bother with installing `pdflatex`, `bibtex` and a whole lot more LaTeX-related packages, which is especially cumbersome on macOS & Windows.
+
+In root of this repository, simply execute:
+
+```bash
+docker-compose up
+```
+
+This will output the final PDFs to `./bigchaindb-whitepaper.pdf` & `./bigchaindb-primer.pdf`.
+
+## Generating the PDF without Docker
 
 Build requires two binaries:
 
 - `pdflatex`
 - `bibtex`
 
-### Using Docker
-
-This is the preferred way so you don't have to bother with installing `pdflatex` and `bibtex`, which is especially cumbersome on macOS & Windows:
-
-```bash
-docker-compose up
-```
-
-This will generate the final PDF and output to `./bigchaindb-whitepaper.pdf`.
-
 ### Linux
 
+On Linux, both binaries come as part of most LaTeX packages, we use `Texlive`:
+
 ```bash
-sudo apt-get install -y texlive texlive-latex-extra pdftk
+sudo apt-get install -y texlive texlive-latex-extra texlive-fonts-extra pdftk
 ```
 
 ### macOS

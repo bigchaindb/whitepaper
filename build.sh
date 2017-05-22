@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 FILENAME='bigchaindb-whitepaper.pdf'
+FILENAME_PRIMER='bigchaindb-primer.pdf'
 
 # # Either of those would be sooooo great, and would replace this whole file
 # #pandoc -o $FILENAME src/index.tex
@@ -15,6 +16,7 @@ fi
 function pdfs {
     pdflatex -interaction=nonstopmode index.tex
     pdflatex -interaction=nonstopmode addendum.tex
+    pdflatex -interaction=nonstopmode primer.tex
 }
 
 function pdfs_combine {
@@ -54,7 +56,7 @@ pdfs
 pdfs
 
 # check the intermediate PDFs were built and exist
-if ! [ -f "index.pdf" ] || ! [ -f "addendum.pdf" ]; then
+if ! [ -f "index.pdf" ] || ! [ -f "addendum.pdf" ] || ! [ -f "primer.pdf" ]; then
 	echo "FATAL ERROR: could not construct PDF files, check tex sources for errors"
 	exit
 fi
@@ -71,6 +73,9 @@ fi
 # copy bigchaindb-whitepaper.pdf to root directory
 cp $FILENAME ../$FILENAME
 
-echo "PDF successfully generated. Whoop whoop."
+# copy bigchaindb-whitepaper-primer.pdf to root directory
+cp primer.pdf ../$FILENAME_PRIMER
+
+echo "PDFs successfully generated. Whoop whoop."
 
 exit

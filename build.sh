@@ -47,7 +47,8 @@ cd tmp
 pdfs
 
 # bibtext the output
-bibtex index.aux
+bibtex index
+bibtex primer
 
 # build, second pass, needed for page numbering
 pdfs

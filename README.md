@@ -1,50 +1,77 @@
 # BigchainDB Whitepaper
 
+![repo banner](media/repo-banner@2x.png)
+
 This repository contains the source (LaTeX) for the BigchainDB whitepaper.
+
+---
+
+**The most recent PDF version of the whitepaper can always be retrieved from [bigchaindb.com/whitepaper](https://www.bigchaindb.com/whitepaper)**
+
+---
 
 If you're looking for the main BigchainDB repository, it's at [bigchaindb/bigchaindb](https://github.com/bigchaindb/bigchaindb).
 
+And if you're really here to get a glimpse of the exciting world of LaTeX-based file generation, this repo is for you.
 
-## Prerequisites for Using Bash Script or Make
+## Using Docker
 
-1. [TeX Live](https://www.tug.org/texlive/) or similar
-2. pdftk (can be installed using `apt-get install pdftk`)
+Using Docker in conjunction with Docker Compose is the recommended way so you don't have to bother with installing `pdflatex`, `bibtex` and a whole lot more LaTeX-related packages, which is especially cumbersome on macOS & Windows.
 
+In root of this repository, simply execute:
 
-## Using the Bash Script to Generate the PDF
-
-```text
-$ cd src
-$ ./renderpaper.sh
+```bash
+docker-compose up
 ```
 
-## Using Make to Generate the PDF
+This will output the final PDFs to `./bigchaindb-whitepaper.pdf` & `./bigchaindb-primer.pdf`.
 
-There's a very simple [Makefile](src/Makefile) under the `src` directory. To generate the PDF (whitepaper.pdf):
+## Generating the PDF without Docker
 
-```text
-$ cd src
-$ make all
+Build requires two binaries:
+
+- `pdflatex`
+- `bibtex`
+
+### Linux
+
+On Linux, both binaries come as part of most LaTeX packages, we use `Texlive`:
+
+```bash
+sudo apt-get install -y texlive texlive-latex-extra texlive-fonts-extra pdftk
 ```
 
-The [Makefile](src/Makefile) has a few targets. To clean intermediate files:
+### macOS
 
-```text
-$ make clean
+On macOS you can get both binaries as part of the BasicTex package, which can be installed manually via [their package installer](http://www.tug.org/mactex/morepackages.html) or via Homebrew cask:
+
+```bash
+brew cask install basictex
 ```
 
-## Using Docker to Generate the PDF
+Now you have a whole bunch of binaries in a rather weird location. You can either symlink the required binaries to one of your `PATH`s, e.g. `/usr/local/bin`:
 
-If you don't wish to bother with installing `pdflatex` and `bibtex`, and feel comfortable with using `docker` and `docker-compose`, then
-
-```text
-$ docker-compose up
+```bash
+# create symlink for pdflatex binary in .app package
+ln -s /Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin/pdflatex /usr/local/bin/pdflatex
+# create symlink for bibtex binary in .app package
+ln -s /Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin/bibtex /usr/local/bin/bibtex
 ```
 
-will generate the PDF.
+Or get all the Tex tools by adding the whole folder to your `PATH` first:
 
-For specific `make` targets, such as `make clean`, do:
-
-```text
-$ docker-compose run --rm docs make clean
+```bash
+export PATH=$PATH:/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin
 ```
+
+## Generate the PDF
+
+Finally, to generate the PDF in `./bigchaindb-whitepaper.pdf`:
+
+```bash
+./build.sh
+```
+
+## License
+
+This work is licensed under a [Creative Commons Attribution 4.0 International license](https://creativecommons.org/licenses/by/4.0/).

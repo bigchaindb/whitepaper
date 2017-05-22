@@ -1,9 +1,15 @@
 FROM ubuntu
 
-RUN apt-get update && apt-get install -y texlive texlive-latex-extra 
-RUN apt-get install -y make
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    texlive \
+    texlive-latex-extra \
+    texlive-fonts-extra \
+    pdftk \
+  && apt-get autoremove \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /usr/src/docs
+RUN mkdir -p /usr/src/whitepaper
 
-VOLUME /usr/src/docs
-WORKDIR /usr/src/docs
+VOLUME /usr/src/whitepaper
+WORKDIR /usr/src/whitepaper

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 FILENAME='bigchaindb-whitepaper.pdf'
 FILENAME_PRIMER='bigchaindb-primer.pdf'
 

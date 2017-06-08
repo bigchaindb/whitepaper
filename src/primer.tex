@@ -85,7 +85,7 @@ BigchainDB is a scalable blockchain database:
 a big-data database with blockchain characteristics
 including decentralization, immutability and
 built-in support for creation \&~transfer of assets.
-Decentralized protocols and technologies have always been a part of the Internet,
+Decentralized protocols and technologies have always been a part of the internet,
 but the introduction of Bitcoin ignited a new wave of interest in their capabilities.
 In particular, Bitcoin showed that it's possible to create a trustable, immutable
 record of transactions (a ledger) without relying on a central, trusted third party.
@@ -95,7 +95,7 @@ Unfortunately, Bitcoin itself can't scale to handle all those records,
 at least not in its current form.
 There are many ideas and prototypes to scale Bitcoin and similar blockchains.
 BigchainDB takes a different approach to solving the scaling problem.
-It starts with a proven, scalable, big-data database,
+It starts with a proven, scalable, big-data database and
 then adds blockchain characteristics.
 \end{abstract}
 
@@ -117,15 +117,15 @@ and concludes with a section about how you can try it.
 
 \section{Bitcoin and Other Decentralized Protocols}
 
-One goal of the early Internet (ARPAnet) was to create a communications network
+One goal of the early internet (ARPAnet) was to create a communications network
 that could withstand nuclear war~\cite{arpanet_and_nuclear_war}.
 To meet that goal, the designers removed the need for a central owner or
 controller, a single point of failure.
-The core Internet protocols are decentralized.
-Many other Internet-based protocols are similarly decentralized,
+The core internet protocols are decentralized.
+Many other internet-based protocols are similarly decentralized,
 at least in part, e.g.~email, DNS, and BitTorrent.
-However, over time, many centralized services and APIs have become
-prevalent on the Internet (e.g.~Facebook and Google search).
+Over time, however, many centralized services and APIs have become
+prevalent on the internet (e.g.~Facebook and Google search).
 Bitcoin~\cite{nakamoto2009bitcoin}, introduced in 2009,
 is a decentralized protocol
 which sparked a new wave of interest in such protocols.
@@ -142,7 +142,7 @@ of computers all over the world.
 
 If Bitcoin can generate a trustable record of bitcoin transactions,
 without needing a central owner or controller,
-could Bitcoin or similar be used
+can Bitcoin or a similar technology be used
 to generate a trustable record of other trust-important information?
 Consider
 birth certificates,
@@ -150,15 +150,15 @@ college transcripts,
 patent filings,
 land ownership transactions,
 art ownership transactions\footnote{BigchainDB
-began as a project within within ascribe.io,
+began as a project within ascribe.io,
 which offers a service to record art attribution, transfer,
 consignment and loan records on the Bitcoin blockchain.},
 supply-chain records,
 lab reports,
-or
+and
 government transparency reports.
-Some of those examples
-generate a lot of records very fast.
+Some of those examples can
+generate new records very fast.
 How much could Bitcoin handle?
 
 
@@ -169,7 +169,8 @@ and adding more nodes won't change that: write throughput doesn't scale with nod
 One \emph{can} store arbitrary information in a Bitcoin transaction,
 but not much: dozens of bytes.
 The total storage capacity of the Bitcoin blockchain grows
-by about 1~MB every 10~minutes, but that's \emph{all} the data, not just the arbitrary data.
+by about one megabyte every ten minutes, but that's \emph{all} the data,
+not just the arbitrary data.
 Moreover, total storage capacity \emph{doesn't} grow when more nodes are added to the network.
 It takes tens of minutes to hours before a Bitcoin transaction can be considered finalized
 (i.e.~part of the long-term blockchain).
@@ -206,20 +207,19 @@ Moreover, all modern databases have support
 for rich querying and permissions.
 
 Storage cost is a major limitation of using Bitcoin.
-As of early 2017,
+By early 2017,
 if you wanted a short Bitcoin transaction confirmation time,
 you had to pay around 25~US~cents
-in transaction fees~\cite{bitcoin_tx_fees_2017}.
-That works out to around 1~US~cent
+in transaction fees~\cite{bitcoin_tx_fees_2017},
+which is around 1~US~cent
 per byte of arbitrary data stored,
 or ten million US dollars per gigabyte.
 Compare that to the cost of Amazon Glacier (used
 for long-term, secure, durable data storage):
 currently $0.004$~US~dollars per gigabyte-month,
-so 40~US~dollars to store a gigabyte for 10000~months
-(i.e.~long enough to be effectively forever).
-(That's assuming storage costs will stay constant,
-but in fact they will go down over time.)
+so 40~US~dollars to store a gigabyte for over 800~years
+(assuming storage costs stay constant,
+whereas in fact they are likely to go down over time.)
 
 There are many proposals to tweak or improve Bitcoin and similar blockchains,
 to increase throughput, increase scalability, increase storage capacity, or reduce latency.
@@ -296,7 +296,8 @@ the BigchainDB cluster.
 That organization needs rules and processes, for example,
 to add and remove participants/nodes (i.e.~governance is required).
 The degree of democracy/autocracy can vary from organization to organization.
-Ideally, the nodes should be in many countries, legal jurisdictions and hosting providers,
+Ideally, the nodes should be located in many countries,
+legal jurisdictions and hosting providers,
 so an issue with one doesn't affect them all.
 As with other blockchains,
 the only people who can create a valid transfer transaction
@@ -361,7 +362,7 @@ prohibitively expensive.
 In a BigchainDB network,
 the governing organization behind the network
 controls the member list,
-so Sybil attacks aren't an issue.
+so Sybil attacks are not an issue.
 
 
 \section{BigchainDB in the Decentralization \mbox{Ecosystem}}
@@ -369,7 +370,7 @@ so Sybil attacks aren't an issue.
 BigchainDB is complementary to decentralized processing / smart contracts (e.g.~Ethereum~\cite{ethereum,buterin-ethereum} or Enigma~\cite{enigma,zyskind2015enigma}), decentralized file systems (e.g.~IPFS~\cite{ipfs}), and communication building blocks (e.g.~email).
 It can be included in higher-level decentralized computing platforms (e.g.~Monax/Tendermint~\cite{monax,tendermint}).
 It can be used side-by-side with identity protocols, financial asset protocols (e.g.~Bitcoin~\cite{nakamoto2009bitcoin}), intellectual property asset protocols (e.g.~SPOOL~\cite{dejonghe_spool}), and glue protocols (e.g.~pegged sidechains~\cite{back2010sidechains}, Interledger~\cite{thomas2015interledger}).
-Scalability improvements to smart contracts blockchains will help fully decentralized applications to better exploit the scalability properties of BigchainDB.
+Scalability improvements to smart-contract blockchains will help fully decentralized applications better leverage the scalability properties of BigchainDB.
 
 BigchainDB works with more centralized computing systems as well.
 One use case is where decentralizing just storage brings the majority of the benefit.
@@ -403,10 +404,11 @@ which is managed by the IPDB Foundation\cite{ipdb_foundation_website}).
 
 Once you have a BigchainDB cluster to connect to,
 you can communicate with it via the BigchainDB HTTP API~\cite{bigchaindb_http_api}.
-BigchainDB also has a WebSocket Event Stream API~\cite{bigchaindb_websocket_api}.
+BigchainDB also provides a WebSocket Event Stream API~\cite{bigchaindb_websocket_api}.
 There are many tools and libraries to help craft a valid BigchainDB transaction:
 a CLI, a Python driver, a JavaScript transaction builder, a Java driver, a Go driver, etc.
-Links to those are given in the Drivers \& Clients page of the docs~\cite{bigchaindb_drivers_clients}.
+Links can be found in the Drivers \&~Clients page
+of the docs~\cite{bigchaindb_drivers_clients}.
 Listing~\ref{py1} shows some example example Python code
 using the BigchainDB Python driver~\cite{bigchaindb_python_driver}.
 

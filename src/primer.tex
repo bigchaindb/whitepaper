@@ -419,7 +419,7 @@ using the BigchainDB Python driver~\cite{bigchaindb_python_driver}.
   from bigchaindb_driver.crypto import generate_keypair
   bdb = BigchainDB('http://example-bdb-cluster.net:9984')
   alice = generate_keypair()
-  edition_info = {
+  new_asset = {
       'data': {
           'piece_name': 'Avocado Green',
           'artist_name': 'Parker Millson',
@@ -429,7 +429,7 @@ using the BigchainDB Python driver~\cite{bigchaindb_python_driver}.
   prepared_creation_tx = bdb.transactions.prepare(
       operation='CREATE',
       signers=alice.public_key,
-      asset=golf_club)
+      asset=new_asset)
   fulfilled_creation_tx = bdb.transactions.fulfill(
       prepared_creation_tx,
       private_keys=alice.private_key)

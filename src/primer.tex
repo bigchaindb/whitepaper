@@ -439,9 +439,9 @@ using the BigchainDB Python driver~\cite{bigchaindb_python_driver}.
 \medskip
 
 Line~4 generates a public/private keypair for a user named \texttt{alice}.
-Lines~5--11 create a Python dict named \texttt{edition\_info}.
+Lines~5--11 create a Python dict named \texttt{new\_asset}.
 Lines~12--15 create a raw (unsigned) BigchainDB CREATE transaction,
-to create an asset based on the \texttt{edition\_info} dict, for \texttt{alice}.
+to create an asset based on the \texttt{new\_asset} dict, for \texttt{alice}.
 Lines~16--18 sign that transaction using the private key (signing key)
 of \texttt{alice}. Line~19 sends that to the BigchainDB cluster.
 

@@ -2,3 +2,11 @@ bigchaindb-whitepaper.pdf
 bigchaindb-primer.pdf
 tmp
 *.log
+src/index.aux
+src/index.bbl
+src/index.blg
+src/index.fdb_latexmk
+src/index.fls
+src/index.out
+src/index.pdf
+src/index.synctex.gz

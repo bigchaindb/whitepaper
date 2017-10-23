@@ -58,7 +58,7 @@ For quick reference, Figure~\ref{fig:bigchain_capacity_vs_nodes} shows how total
 
 Before we can hash or sign a JSON message (e.g.~a transaction payload), we must convert it to a string in a standard way (i.e.~with the same result, regardless of the programming language or computer architecture used). That is, we must serialize the JSON message in a standard way. Fortunately, there \emph{is} a standard: RFC 7159 \cite{RFC7159}.
 
-We do JSON serialization using the \texttt{dumps()} function in \texttt{python-rapidjson}\footnote{\url{https://github.com/kenrobbins/python-rapidjson}}, a Python wrapper for \texttt{rapidjson}\footnote{\url{https://github.com/miloyip/rapidjson}} (a fast and RFC 7159-compliant JSON parser/generator written in C\nolinebreak[4]\hspace{-.05em}\raisebox{.4ex}{\tiny\bf ++}). Here's how we call it:
+We do JSON serialization using the \texttt{dumps()} function in \texttt{python-rapidjson}\footnote{\url{https://github.com/kenrobbins/python-rapidjson}}, a Python wrapper for \texttt{rapidjson}\footnote{\url{https://github.com/miloyip/rapidjson}} (a fast and RFC 7159-compliant JSON parser/generator written in C\nolinebreak[4]\hspace{-.05em}\raisebox{.4ex}{\tiny\bfseries ++}). Here's how we call it:
 
 \medskip
 \begin{minipage}{\linewidth}

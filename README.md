@@ -2,13 +2,7 @@
 
 ![repo banner](media/repo-banner@2x.png)
 
-This repository contains the source (LaTeX) for the BigchainDB whitepaper.
-
----
-
-**The most recent PDF version of the whitepaper can always be retrieved from [bigchaindb.com/whitepaper](https://www.bigchaindb.com/whitepaper)**
-
----
+This repository contains the source (LaTeX) for the original BigchainDB whitepaper, which was first published in February of 2016.
 
 If you're looking for the main BigchainDB repository, it's at [bigchaindb/bigchaindb](https://github.com/bigchaindb/bigchaindb).
 
